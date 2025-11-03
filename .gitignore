@@ -1,0 +1,23 @@
+# Compiled Java files
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test output (optional - you may want to keep these)
+# *.log
+
+# Exclude old debug files (already deleted)
+# Debug*.java
+# Check*.java
+# Verify*.java
+# Simple*.java
+
