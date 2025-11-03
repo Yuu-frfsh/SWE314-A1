@@ -1,0 +1,807 @@
+================================================================================
+                    EDUCATIONAL ENCRYPTION TOOL
+                    CLASS DOCUMENTATION
+================================================================================
+
+This document provides a comprehensive overview of all classes in the project,
+including their methods, attributes, and relationships.
+
+================================================================================
+                               INTERFACE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ INTERFACE: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Interface for all encryption algorithms in the educational tool.
+  Each algorithm must implement encryption, decryption, and step display.
+
+Methods:
+  + String encrypt(String plaintext, String key)
+    - Encrypts plaintext using the provided key
+    - Returns the encrypted ciphertext
+    
+  + String decrypt(String ciphertext, String key)
+    - Decrypts ciphertext using the provided key
+    - Returns the decrypted plaintext
+    
+  + void displaySteps(String text, String key)
+    - Displays the step-by-step process of encryption/decryption for educational purposes
+
+Relationships:
+  - Implemented by: MonoalphabeticCipher, VigenereCipher, PlayfairCipher,
+                     KeyedTranspositionCipher, DESCipher, CombinedCipher
+
+================================================================================
+                        CORE CIPHER CLASSES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: MonoalphabeticCipher                                                 │
+│ IMPLEMENTS: EncryptionAlgorithm                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Monoalphabetic Substitution Cipher Implementation (Caesar Cipher)
+  Shifts each letter by a fixed number of positions in the alphabet
+
+Attributes:
+  - private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext using Caesar cipher shift
+    - Key format: integer shift value (string)
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts ciphertext using Caesar cipher shift
+    - Key format: integer shift value (string)
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Displays step-by-step encryption process
+    
+  + void runEncryption()
+    - Interactive encryption session
+    
+  + void runDecryption(String ciphertext, String key)
+    - Interactive decryption session
+    
+  - int normalizeShift(int shift)
+    - Normalizes shift value to handle values beyond ±26
+    - Returns normalized shift in range [-25, 25]
+
+Relationships:
+  - Uses: InputValidator (for user input validation)
+  - Used by: CombinedCipher, FrequencyAnalysis
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: VigenereCipher                                                       │
+│ IMPLEMENTS: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Vigenere Cipher Implementation
+  Uses a keyword to shift each letter by the position of the keyword letter
+
+Attributes:
+  - private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext using Vigenere cipher
+    - Key format: keyword string
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts ciphertext using Vigenere cipher
+    - Key format: keyword string
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Displays step-by-step Vigenere encryption process
+    
+  + void runEncryption()
+    - Interactive encryption session
+    
+  + void runDecryption(String ciphertext, String key)
+    - Interactive decryption session
+
+Relationships:
+  - Uses: InputValidator
+  - Used by: CombinedCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: PlayfairCipher                                                       │
+│ IMPLEMENTS: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Playfair Cipher Implementation
+  Uses a 5x5 matrix to encrypt digraphs (pairs of letters)
+
+Attributes:
+  - private static final String ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+    (Note: J removed for 5x5 grid, J is treated as I)
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext using Playfair cipher
+    - Key format: keyword string
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts ciphertext using Playfair cipher
+    - Key format: keyword string
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Displays step-by-step Playfair encryption process
+    
+  + void runEncryption()
+    - Interactive encryption session
+    
+  + void runDecryption(String ciphertext, String key)
+    - Interactive decryption session
+    
+  - String buildMatrix(String key)
+    - Builds the Playfair 5x5 key matrix from keyword
+    - Returns 25-character string representing the matrix
+    
+  - int[] getPosition(char letter, String matrix)
+    - Gets row and column of a letter in the matrix
+    - Returns int[] with [row, col]
+    
+  - List<String> prepareDigraphs(String text)
+    - Prepares plaintext for Playfair encryption
+    - Returns List of digraphs (pairs), handles padding with X
+
+Relationships:
+  - Uses: InputValidator, java.util.ArrayList, java.util.HashSet, java.util.List, java.util.Set
+  - Used by: CombinedCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: KeyedTranspositionCipher                                             │
+│ IMPLEMENTS: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Keyed Transposition Cipher Implementation
+  Uses a 2x5 permutation matrix where the first row represents plaintext indices
+  and the second row represents ciphertext positions (both 1-indexed)
+
+Attributes:
+  (No class-level attributes)
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext using keyed transposition with 2x5 matrix
+    - Key format: "plaintextIndices\nciphertextPositions" (two lines)
+    - Example: "3 1 4 5 2\n1 2 3 4 5"
+    - Processes message in 5-character blocks with 'z' padding
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts ciphertext using keyed transposition with 2x5 matrix
+    - Key format: "plaintextIndices\nciphertextPositions" (two lines)
+    - Removes padding 'z' characters
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Shows the 2x5 matrix format and block-by-block transformation
+    
+  + void runEncryption()
+    - Interactive encryption session (prompts for two-line key format)
+    
+  + void runDecryption(String ciphertext, String key)
+    - Interactive decryption session
+
+Relationships:
+  - Uses: InputValidator
+  - Used by: CombinedCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: DESCipher                                                            │
+│ IMPLEMENTS: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Corrected Simplified DES Cipher Implementation
+  (Educational Use Only – Not for Production Security)
+
+Attributes:
+  - private static final int[] KEY_SHIFTS = {0,1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}
+  - private static final int[] PC1 (56 elements - Permuted Choice 1)
+  - private static final int[] PC2 (48 elements - Permuted Choice 2)
+  - private static final int[] IP (64 elements - Initial Permutation)
+  - private static final int[] IPi (64 elements - Inverse Initial Permutation)
+  - private static final int[] EXPANSION (48 elements - Expansion function)
+  - private static final int[] P (32 elements - Permutation)
+  - private static final int[][][] SBOX (8 S-boxes, 4x16 each)
+  - private long[] K = new long[17] (Key schedule array)
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext (UTF-8) with key (first 8 chars)
+    - Returns hex string
+    - Processes in 64-bit blocks
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts hex ciphertext with key
+    - Returns UTF-8 plaintext string
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Displays step-by-step DES encryption process
+    
+  + void runEncryption()
+    - Interactive encryption session
+    
+  + void runDecryption(String ciphertext, String key)
+    - Interactive decryption session
+    
+  - static String keyStringTo64BitBinary(String key)
+    - Converts key string (first 8 chars) to 64-bit binary string
+    
+  - static String utfToBin(String utf)
+    - Utility: convert UTF-8 to binary string
+    
+  - static String binToHex(String bin)
+    - Utility: convert binary to hex (keep full length)
+    
+  - static String hexToBin(String hex)
+    - Utility: convert hex to binary string
+    
+  - static String binToUTF(String bin)
+    - Utility: convert binary to UTF-8 string
+    
+  - void buildKeySchedule(String binKey)
+    - Builds DES key schedule from 64-bit binary key
+    
+  - String encryptBlock(String block)
+    - Encrypts one 64-bit block
+    
+  - String decryptBlock(String block)
+    - Decrypts one 64-bit block
+    
+  - static String f(String R, String key)
+    - Feistel function in DES algorithm (FIPS Pub 46)
+    - Takes 32-bit message and 48-bit key, returns 32-bit output
+    
+  - static String applySBoxesAndP(String bin)
+    - Applies S-boxes and P permutation to 48-bit input
+    - Returns 32-bit output
+    
+  + static void main(String[] args)
+    - Test main method
+
+Relationships:
+  - Uses: java.math.BigInteger, java.nio.charset.StandardCharsets, InputValidator
+  - Used by: main (via menu system)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: CombinedCipher                                                       │
+│ IMPLEMENTS: EncryptionAlgorithm                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Combined Cipher Implementation
+  Combines Monoalphabetic substitution with another cipher (Vigenere, Playfair, or Transposition)
+
+Attributes:
+  - private static Scanner scanner
+  - private EncryptionAlgorithm algorithm2 (the second cipher to combine)
+  - private String algorithm2Name (name of the second algorithm)
+
+Methods:
+  + String encrypt(String plaintext, String key) [@Override]
+    - Encrypts plaintext using combined ciphers
+    - Key format: "monoKey|secondKey" (pipe-separated)
+    - Applies Monoalphabetic first, then second algorithm
+    
+  + String decrypt(String ciphertext, String key) [@Override]
+    - Decrypts ciphertext using combined ciphers
+    - Key format: "monoKey|secondKey"
+    - Applies second algorithm decryption first, then Monoalphabetic
+    
+  + void displaySteps(String text, String key) [@Override]
+    - Displays step-by-step combined encryption process
+    - Shows both algorithm steps
+    
+  + void runEncryption()
+    - Interactive encryption session
+    - Allows user to choose second algorithm
+    
+  - void chooseSecondAlgorithm()
+    - Allows user to select second algorithm (Vigenere, Playfair, or Transposition)
+
+Relationships:
+  - Uses: MonoalphabeticCipher, VigenereCipher, PlayfairCipher, KeyedTranspositionCipher
+  - Uses: InputValidator, java.util.Scanner
+  - Composition: Contains EncryptionAlgorithm algorithm2
+
+
+================================================================================
+                        UTILITY CLASSES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: InputValidator                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Utility class for validating and sanitizing user inputs
+
+Attributes:
+  - private static Scanner scanner
+
+Methods:
+  + static String getInput(String prompt)
+    - Get a line of text input from the user
+    
+  + static boolean validateNotEmpty(String input, String fieldName)
+    - Validate that a string is not empty
+    
+  + static String removeSpecialChars(String text)
+    - Remove all non-alphabetic characters from a string
+    
+  + static String removeSpecialCharsKeepSpaces(String text)
+    - Remove all non-alphabetic and non-space characters
+    
+  + static String toUpperCase(String text)
+    - Convert string to uppercase for consistency
+    
+  + static boolean validateLength(String key, int expectedLength, String fieldName)
+    - Validate that a key is exactly the specified length
+    
+  + static boolean isAlphabetic(String text)
+    - Check if a string contains only alphabetic characters
+    
+  + static boolean hasDuplicates(String text)
+    - Check if a string contains any duplicate characters
+    
+  + static boolean getYesNo(String prompt)
+    - Get a yes/no answer from the user
+
+Relationships:
+  - Used by: All cipher classes, main, FrequencyAnalysis, CombinedCipher
+  - Uses: java.util.Scanner
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: FrequencyAnalysis                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Frequency Analysis for Cryptanalysis
+  Analyzes letter frequency in ciphertext to help break ciphers
+  Automatically detects key and decrypts monoalphabetic substitution ciphers
+
+Attributes:
+  - private static final double[] ENGLISH_FREQUENCY (26 elements)
+    English language letter frequencies (approximate percentages)
+  - private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  
+  Inner Class:
+  - private static class IndexValue
+    - int index
+    - double value
+
+Methods:
+  + void analyze(String text)
+    - Display frequency analysis results
+    - Automatically detects key and decrypts for monoalphabetic ciphers
+    
+  + void runAnalysis()
+    - Interactive frequency analysis session
+    
+  - int[] countLetters(String text)
+    - Count letter frequencies in text
+    - Returns array of counts for each letter (A-Z)
+    
+  - double[] calculatePercentages(int[] counts)
+    - Calculate percentage frequencies
+    
+  - void findMostFrequent(double[] percentages, int topN)
+    - Find the most frequent letters
+    
+  - void suggestSubstitutions(double[] percentages)
+    - Suggest possible letter substitutions based on frequency
+    
+  - Integer detectKey(double[] percentages)
+    - Detect the encryption key by comparing ciphertext frequencies to English frequencies
+    - Uses correlation analysis to find best shift
+    - Returns detected shift/key value, or null if cannot determine
+    
+  - double calculateCorrelation(double[] cipherPercentages, int shift)
+    - Calculate correlation between ciphertext frequencies and expected English frequencies
+    - Uses Pearson correlation coefficient
+    
+  - String decryptWithKey(String ciphertext, int detectedKey)
+    - Automatically decrypt ciphertext using detected key
+
+Relationships:
+  - Uses: MonoalphabeticCipher (for decryption), InputValidator
+  - Uses: java.util.Arrays
+  - Used by: main (via cryptanalysis menu)
+
+
+================================================================================
+                        MAIN APPLICATION CLASS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: main                                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Main entry point for the Educational Encryption/Decryption Tool
+  Provides menu-driven interface for users to select and use different algorithms
+
+Attributes:
+  - private static Scanner scanner
+
+Methods:
+  + static void main(String[] args)
+    - Main entry point - runs the menu-driven interface
+    
+  - static void printWelcome()
+    - Print welcome message
+    
+  - static void printMenu()
+    - Print main menu options
+    
+  - static int getChoice()
+    - Get user's menu choice
+    - Returns choice as integer, -1 for invalid input
+    
+  - static void runMonoalphabeticEncryption()
+    - Run Monoalphabetic encryption
+    
+  - static void runVigenereEncryption()
+    - Run Vigenere encryption
+    
+  - static void runPlayfairEncryption()
+    - Run Playfair encryption
+    
+  - static void runKeyedTranspositionEncryption()
+    - Run Keyed Transposition encryption
+    
+  - static void runCombinedEncryption()
+    - Run Combined encryption
+    
+  - static void runDESEncryption()
+    - Run DES encryption
+    
+  - static void runDecryption()
+    - Run decryption menu (supports all cipher types)
+    
+  - static void runCryptanalysis()
+    - Run cryptanalysis (Frequency Analysis)
+
+Relationships:
+  - Uses: All cipher classes (MonoalphabeticCipher, VigenereCipher, PlayfairCipher,
+         KeyedTranspositionCipher, CombinedCipher, DESCipher)
+  - Uses: FrequencyAnalysis, InputValidator
+  - Uses: java.util.Scanner
+  - Orchestrates: All encryption/decryption operations
+
+
+================================================================================
+                        TEST CLASSES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: ComprehensiveTest                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Comprehensive Test Suite for All Encryption/Decryption Methods
+  Tests round-trip encryption/decryption for all ciphers
+
+Attributes:
+  - private static int totalTests
+  - private static int totalPassed
+  - private static int totalFailed
+
+Methods:
+  + static void main(String[] args)
+    - Main test runner
+    
+  - static void testMonoalphabeticCipher()
+    - Test Monoalphabetic (Caesar) Cipher
+    
+  - static void testVigenereCipher()
+    - Test Vigenere Cipher
+    
+  - static void testPlayfairCipher()
+    - Test Playfair Cipher
+    
+  - static void testKeyedTranspositionCipher()
+    - Test Keyed Transposition Cipher
+    
+  - static void testDESCipher()
+    - Test DES Cipher
+    
+  - static void testCombinedCipher()
+    - Test Combined Cipher (manually applies both ciphers)
+    
+  - static void roundTripTest(EncryptionAlgorithm cipher, String plaintext, String key, String description)
+    - Generic round-trip test for any EncryptionAlgorithm
+    
+  - static void testCombinedMonoVigenere(...)
+    - Test Monoalphabetic + Vigenere combination
+    
+  - static void testCombinedMonoPlayfair(...)
+    - Test Monoalphabetic + Playfair combination
+    
+  - static void testCombinedMonoTransposition(...)
+    - Test Monoalphabetic + Transposition combination
+    
+  - static void printFinalSummary()
+    - Print final test summary
+
+Relationships:
+  - Uses: All EncryptionAlgorithm implementations
+  - Tests: All cipher classes
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: MonoalphabeticTest                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for MonoalphabeticCipher (Caesar Cipher)
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  
+  - static void testValidUppercase(MonoalphabeticCipher cipher)
+  - static void testValidLowercase(MonoalphabeticCipher cipher)
+  - static void testValidMixedCase(MonoalphabeticCipher cipher)
+  - static void testValidWithSpaces(MonoalphabeticCipher cipher)
+  - static void testValidSingleChar(MonoalphabeticCipher cipher)
+  - static void testEdgeCases(MonoalphabeticCipher cipher)
+  - static void testLargeShifts(MonoalphabeticCipher cipher)
+  - static void testEncryptDecryptRoundTrip(MonoalphabeticCipher cipher)
+  - static void test(String plaintext, String key, String expectedCiphertext, String description, MonoalphabeticCipher cipher)
+  - static void roundTripTest(String plaintext, String key, String description, MonoalphabeticCipher cipher)
+  - static void printSummary()
+
+Relationships:
+  - Tests: MonoalphabeticCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: VigenereTest                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for VigenereCipher
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testValidInputs(VigenereCipher cipher)
+  - static void testDifferentKeyLengths(VigenereCipher cipher)
+  - static void testSpecialCases(VigenereCipher cipher)
+  - static void testEdgeCases(VigenereCipher cipher)
+  - static void testEncryptDecryptRoundTrip(VigenereCipher cipher)
+  - static void test(String plaintext, String key, String expectedCiphertext, String description, VigenereCipher cipher)
+  - static void roundTripTest(String plaintext, String key, String description, VigenereCipher cipher)
+  - static void printSummary()
+
+Relationships:
+  - Tests: VigenereCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: PlayfairTest                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for PlayfairCipher
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testValidInputs(PlayfairCipher cipher)
+  - static void testDifferentKeys(PlayfairCipher cipher)
+  - static void testSpecialCases(PlayfairCipher cipher)
+  - static void testEdgeCases(PlayfairCipher cipher)
+  - static void testEncryptDecryptRoundTrip(PlayfairCipher cipher)
+  - static void test(String plaintext, String key, String expectedCiphertext, String description, PlayfairCipher cipher)
+  - static void roundTripTest(String plaintext, String key, String description, PlayfairCipher cipher)
+  - static void printSummary()
+
+Relationships:
+  - Tests: PlayfairCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: KeyedTranspositionTest                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for KeyedTranspositionCipher
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testValidInputs(KeyedTranspositionCipher cipher)
+  - static void testDifferentKeys(KeyedTranspositionCipher cipher)
+  - static void testEdgeCases(KeyedTranspositionCipher cipher)
+  - static void testEncryptDecryptRoundTrip(KeyedTranspositionCipher cipher)
+  - static void test(String plaintext, String key, String expectedCiphertext, String description, KeyedTranspositionCipher cipher)
+  - static void roundTripTest(String plaintext, String key, String description, KeyedTranspositionCipher cipher)
+  - static void printSummary()
+
+Relationships:
+  - Tests: KeyedTranspositionCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: DESTest                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for DESCipher
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testValidInputs(DESCipher cipher)
+  - static void testEdgeCases(DESCipher cipher)
+  - static void testEncryptDecryptRoundTrip(DESCipher cipher)
+  - static void roundTripTest(String plaintext, String key, String description, DESCipher cipher)
+  - static void printSummary()
+
+Relationships:
+  - Tests: DESCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: CombinedTest                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for CombinedCipher
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testEncryptDecryptRoundTrip()
+  - static void roundTripTestMonoVigenere(...)
+  - static void roundTripTestMonoPlayfair(...)
+  - static void roundTripTestMonoTransposition(...)
+  - static void printSummary()
+
+Relationships:
+  - Tests: CombinedCipher, MonoalphabeticCipher, VigenereCipher, PlayfairCipher, KeyedTranspositionCipher
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLASS: FrequencyAnalysisTest                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Description:
+  Unit Tests for FrequencyAnalysis
+  Using Input Space Partitioning approach
+
+Attributes:
+  - private static int testCount
+  - private static int passCount
+  - private static int failCount
+
+Methods:
+  + static void main(String[] args)
+  - static void testFrequencyCounts(FrequencyAnalysis analyzer)
+  - static void testBasicAnalysis(FrequencyAnalysis analyzer)
+  - static void testEdgeCases(FrequencyAnalysis analyzer)
+  - static void printSummary()
+
+Relationships:
+  - Tests: FrequencyAnalysis
+
+================================================================================
+                        CLASS RELATIONSHIPS
+================================================================================
+
+INTERFACE IMPLEMENTATION:
+  EncryptionAlgorithm (Interface)
+    ├── MonoalphabeticCipher
+    ├── VigenereCipher
+    ├── PlayfairCipher
+    ├── KeyedTranspositionCipher
+    ├── DESCipher
+    └── CombinedCipher
+
+COMPOSITION & USAGE:
+  main
+    ├── Uses: MonoalphabeticCipher
+    ├── Uses: VigenereCipher
+    ├── Uses: PlayfairCipher
+    ├── Uses: KeyedTranspositionCipher
+    ├── Uses: CombinedCipher
+    ├── Uses: DESCipher
+    ├── Uses: FrequencyAnalysis
+    └── Uses: InputValidator
+
+  CombinedCipher
+    ├── Contains: EncryptionAlgorithm algorithm2 (composition)
+    ├── Uses: MonoalphabeticCipher
+    ├── Uses: VigenereCipher (when algorithm2 = VigenereCipher)
+    ├── Uses: PlayfairCipher (when algorithm2 = PlayfairCipher)
+    └── Uses: KeyedTranspositionCipher (when algorithm2 = KeyedTranspositionCipher)
+
+  FrequencyAnalysis
+    └── Uses: MonoalphabeticCipher (for auto-decryption)
+
+  All Cipher Classes
+    └── Use: InputValidator (for input validation)
+
+  All Test Classes
+    └── Test: Their respective cipher classes
+
+DEPENDENCY FLOW:
+  1. main → orchestrates all operations
+  2. Cipher classes → implement EncryptionAlgorithm
+  3. CombinedCipher → composes other cipher classes
+  4. FrequencyAnalysis → uses MonoalphabeticCipher for decryption
+  5. InputValidator → used by all classes requiring user input
+
+================================================================================
+                        SUMMARY STATISTICS
+================================================================================
+
+Total Classes: 18
+  - Interfaces: 1 (EncryptionAlgorithm)
+  - Core Cipher Classes: 6 (MonoalphabeticCipher, VigenereCipher, PlayfairCipher,
+                             KeyedTranspositionCipher, DESCipher, CombinedCipher)
+  - Utility Classes: 2 (InputValidator, FrequencyAnalysis)
+  - Main Class: 1 (main)
+  - Test Classes: 8 (ComprehensiveTest, MonoalphabeticTest, VigenereTest,
+                      PlayfairTest, KeyedTranspositionTest, DESTest, CombinedTest,
+                      FrequencyAnalysisTest)
+
+Key Relationships:
+  - 6 classes implement EncryptionAlgorithm interface
+  - 1 class (CombinedCipher) uses composition to combine ciphers
+  - All classes use InputValidator for input validation
+  - FrequencyAnalysis uses MonoalphabeticCipher for auto-decryption
+  - main class orchestrates the entire application
+
+================================================================================
+                        END OF DOCUMENTATION
+================================================================================
+
