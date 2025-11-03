@@ -99,6 +99,19 @@ public class FrequencyAnalysis {
         // Suggest possible substitutions for monoalphabetic
         System.out.println("\nPossible monoalphabetic substitutions:");
         suggestSubstitutions(percentages);
+        
+        // Automatically detect key and decrypt
+        System.out.println("\n--- Auto-Decryption (Monoalphabetic Cipher Only) ---");
+        Integer detectedKey = detectKey(percentages);
+        
+        if (detectedKey != null) {
+            String plaintext = decryptWithKey(text, detectedKey);
+            System.out.println("Detected Key (Shift): " + detectedKey);
+            System.out.println("Decrypted Plaintext: " + plaintext);
+        } else {
+            System.out.println("Could not automatically detect the key.");
+            System.out.println("The ciphertext may not be monoalphabetic, or sample size is too small.");
+        }
     }
     
     /**
@@ -155,6 +168,82 @@ public class FrequencyAnalysis {
     }
     
     /**
+     * Detect the encryption key by comparing ciphertext frequencies to English frequencies
+     * Uses correlation between shifted cipher frequencies and expected English frequencies
+     * @param percentages The frequency percentages of ciphertext
+     * @return The detected shift/key value, or null if cannot determine
+     */
+    private Integer detectKey(double[] percentages) {
+        double maxCorrelation = -1.0;
+        int bestShift = 0;
+        
+        // Test each possible shift (0-25)
+        for (int shift = 0; shift < 26; shift++) {
+            // Calculate correlation between cipher frequencies (shifted back) and English frequencies
+            double correlation = calculateCorrelation(percentages, shift);
+            
+            if (correlation > maxCorrelation) {
+                maxCorrelation = correlation;
+                bestShift = shift;
+            }
+        }
+        
+        // If correlation is reasonable (above threshold), return the shift
+        // Threshold set to 0.3 to ensure reasonable match
+        if (maxCorrelation > 0.3) {
+            return bestShift;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Calculate correlation between ciphertext frequencies (when shifted back by shift)
+     * and expected English letter frequencies
+     * @param cipherPercentages Ciphertext letter frequencies
+     * @param shift The shift to test
+     * @return Correlation score (0-1, higher is better match)
+     */
+    private double calculateCorrelation(double[] cipherPercentages, int shift) {
+        double sumProduct = 0.0;
+        double sumCipherSq = 0.0;
+        double sumEnglishSq = 0.0;
+        
+        for (int i = 0; i < 26; i++) {
+            // Calculate what plaintext letter this cipher letter represents
+            // If cipher letter at index i, and shift is s, then plaintext is at (i - s + 26) % 26
+            int plainIndex = (i - shift + 26) % 26;
+            
+            double cipherFreq = cipherPercentages[i];
+            double englishFreq = ENGLISH_FREQUENCY[plainIndex];
+            
+            // Pearson correlation coefficient components
+            sumProduct += cipherFreq * englishFreq;
+            sumCipherSq += cipherFreq * cipherFreq;
+            sumEnglishSq += englishFreq * englishFreq;
+        }
+        
+        // Avoid division by zero
+        if (sumCipherSq == 0.0 || sumEnglishSq == 0.0) {
+            return 0.0;
+        }
+        
+        // Return correlation coefficient
+        return sumProduct / Math.sqrt(sumCipherSq * sumEnglishSq);
+    }
+    
+    /**
+     * Automatically decrypt ciphertext using detected key
+     * @param ciphertext The ciphertext to decrypt
+     * @param detectedKey The detected shift key
+     * @return The decrypted plaintext
+     */
+    private String decryptWithKey(String ciphertext, int detectedKey) {
+        MonoalphabeticCipher cipher = new MonoalphabeticCipher();
+        return cipher.decrypt(ciphertext, String.valueOf(detectedKey));
+    }
+    
+    /**
      * Helper class for sorting by value
      */
     private static class IndexValue {
@@ -172,7 +261,8 @@ public class FrequencyAnalysis {
      */
     public void runAnalysis() {
         System.out.println("\n=== Frequency Analysis (Cryptanalysis) ===");
-        System.out.println("Analyzes letter frequency to help break substitution ciphers");
+        System.out.println("Automatically detects key and decrypts monoalphabetic substitution ciphers");
+        System.out.println("by analyzing letter frequency patterns.");
         
         String ciphertext = InputValidator.getInput("Enter ciphertext to analyze: ");
         if (!InputValidator.validateNotEmpty(ciphertext, "Ciphertext")) {
@@ -181,8 +271,8 @@ public class FrequencyAnalysis {
         
         analyze(ciphertext);
         
-        System.out.println("\nTip: Compare these frequencies with English letter frequencies");
-        System.out.println("to help break monoalphabetic substitution ciphers!");
+        System.out.println("\nNote: This method works best with monoalphabetic substitution ciphers.");
+        System.out.println("For other cipher types, the detected key may be incorrect.");
     }
 }
 
