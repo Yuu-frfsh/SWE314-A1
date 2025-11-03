@@ -1,17 +1,16 @@
 /**
- * Unit Tests for MonoalphabeticCipher
+ * Unit Tests for MonoalphabeticCipher (Caesar Cipher)
  * Using Input Space Partitioning approach
  */
 public class MonoalphabeticTest {
     
-    private static final String VALID_KEY = "QWERTYUIOPASDFGHJKLZXCVBNM"; // 26-char permutation
     private static int testCount = 0;
     private static int passCount = 0;
     private static int failCount = 0;
     
     public static void main(String[] args) {
         System.out.println("========================================");
-        System.out.println("MonoalphabeticCipher Unit Tests");
+        System.out.println("MonoalphabeticCipher (Caesar) Unit Tests");
         System.out.println("Input Space Partitioning Approach");
         System.out.println("========================================\n");
         
@@ -24,7 +23,7 @@ public class MonoalphabeticTest {
         testValidWithSpaces(cipher);
         testValidSingleChar(cipher);
         testEdgeCases(cipher);
-        testInvalidKeys(cipher);
+        testLargeShifts(cipher);
         testEncryptDecryptRoundTrip(cipher);
         
         // Print summary
@@ -32,14 +31,16 @@ public class MonoalphabeticTest {
     }
     
     /**
-     * Test Category 1: Valid uppercase inputs
+     * Test Category 1: Valid uppercase inputs with various shifts
      */
     private static void testValidUppercase(MonoalphabeticCipher cipher) {
         System.out.println("--- Test Category 1: Valid Uppercase Inputs ---");
         
-        test("HELLO", VALID_KEY, "ITSSG", "Simple word", cipher);
-        test("WORLD", VALID_KEY, "VGKSR", "Common word", cipher);
-        test("ABCDEFGHIJKLMNOPQRSTUVWXYZ", VALID_KEY, "QWERTYUIOPASDFGHJKLZXCVBNM", "Full alphabet", cipher);
+        test("HELLO", "3", "KHOOR", "Simple word, shift=3", cipher);
+        test("WORLD", "3", "ZRUOG", "Common word, shift=3", cipher);
+        test("ABC", "1", "BCD", "Alphabet start, shift=1", cipher);
+        test("XYZ", "2", "ZAB", "Alphabet end, shift=2 (wraps)", cipher);
+        test("HELLO", "-3", "EBIIL", "Simple word, shift=-3", cipher);
     }
     
     /**
@@ -48,8 +49,9 @@ public class MonoalphabeticTest {
     private static void testValidLowercase(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 2: Valid Lowercase Inputs ---");
         
-        test("hello", VALID_KEY, "ITSSG", "Simple lowercase word", cipher);
-        test("world", VALID_KEY, "VGKSR", "Mixed lowercase", cipher);
+        test("hello", "3", "KHOOR", "Simple lowercase word, shift=3", cipher);
+        test("world", "3", "ZRUOG", "Mixed lowercase, shift=3", cipher);
+        test("abc", "-1", "ZAB", "Lowercase shift=-1 (wraps)", cipher);
     }
     
     /**
@@ -58,8 +60,9 @@ public class MonoalphabeticTest {
     private static void testValidMixedCase(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 3: Valid Mixed Case Inputs ---");
         
-        test("HeLLo", VALID_KEY, "ITSSG", "Mixed case word", cipher);
-        test("WoRLd", VALID_KEY, "VGKSR", "Mixed case word 2", cipher);
+        test("HeLLo", "3", "KHOOR", "Mixed case word, shift=3", cipher);
+        test("WoRLd", "3", "ZRUOG", "Mixed case word 2, shift=3", cipher);
+        test("AbC", "-2", "YZA", "Mixed case shift=-2 (wraps)", cipher);
     }
     
     /**
@@ -68,8 +71,9 @@ public class MonoalphabeticTest {
     private static void testValidWithSpaces(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 4: Valid Inputs with Spaces ---");
         
-        test("HELLO WORLD", VALID_KEY, "ITSSG VGKSR", "Words with space", cipher);
-        test("  ABC  ", VALID_KEY, "  QWE  ", "Spaces around text", cipher);
+        test("HELLO WORLD", "3", "KHOOR ZRUOG", "Words with space, shift=3", cipher);
+        test("  ABC  ", "1", "  BCD  ", "Spaces around text, shift=1", cipher);
+        test("TEST MESSAGE", "-5", "OZNO HZNNVBZ", "Words with spaces, shift=-5", cipher);
     }
     
     /**
@@ -78,9 +82,11 @@ public class MonoalphabeticTest {
     private static void testValidSingleChar(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 5: Single Character Inputs ---");
         
-        test("A", VALID_KEY, "Q", "Single uppercase letter", cipher);
-        test("a", VALID_KEY, "Q", "Single lowercase letter", cipher);
-        test("Z", VALID_KEY, "M", "Last letter of alphabet", cipher);
+        test("A", "1", "B", "Single uppercase letter, shift=1", cipher);
+        test("a", "1", "B", "Single lowercase letter, shift=1", cipher);
+        test("Z", "1", "A", "Last letter of alphabet, shift=1 (wraps)", cipher);
+        test("A", "-1", "Z", "First letter, shift=-1 (wraps)", cipher);
+        test("A", "0", "A", "Shift=0 (identity)", cipher);
     }
     
     /**
@@ -89,33 +95,25 @@ public class MonoalphabeticTest {
     private static void testEdgeCases(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 6: Edge Cases ---");
         
-        test("", VALID_KEY, "", "Empty string", cipher);
-        test("123", VALID_KEY, "123", "Numbers only", cipher);
-        test("!@#", VALID_KEY, "!@#", "Special characters only", cipher);
-        test("HELLO123WORLD", VALID_KEY, "ITSSG123VGKSR", "Mixed with numbers", cipher);
-        test("HELLO!@#WORLD", VALID_KEY, "ITSSG!@#VGKSR", "Mixed with special chars", cipher);
+        test("", "3", "", "Empty string", cipher);
+        test("123", "3", "123", "Numbers only", cipher);
+        test("!@#", "3", "!@#", "Special characters only", cipher);
+        test("HELLO123WORLD", "3", "KHOOR123ZRUOG", "Mixed with numbers, shift=3", cipher);
+        test("HELLO!@#WORLD", "3", "KHOOR!@#ZRUOG", "Mixed with special chars, shift=3", cipher);
     }
     
     /**
-     * Test Category 7: Invalid keys
+     * Test Category 7: Large shifts (should normalize)
      */
-    private static void testInvalidKeys(MonoalphabeticCipher cipher) {
-        System.out.println("\n--- Test Category 7: Invalid Keys ---");
+    private static void testLargeShifts(MonoalphabeticCipher cipher) {
+        System.out.println("\n--- Test Category 7: Large Shifts (>26 or <-26) ---");
         
-        // Note: These tests check that validation catches errors
-        // We're testing encryption with invalid keys to see behavior
-        
-        // Short key
-        String shortKey = "QWERTYUIOPASDFGHJKLZXCVBN";
-        encryptAndCheck("HELLO", shortKey, "Invalid: short key", cipher);
-        
-        // Long key (should only use first 26 chars)
-        String longKey = VALID_KEY + "EXTRA";
-        test("HELLO", longKey, "ITSSG", "Long key (first 26 used)", cipher);
-        
-        // Key with numbers
-        String keyWithNumbers = "QWERTYUIOPASDFGHJKLZXCVBN1";
-        encryptAndCheck("HELLO", keyWithNumbers, "Invalid: key with numbers", cipher);
+        test("ABC", "27", "BCD", "Shift=27 (normalized to 1)", cipher);
+        test("HELLO", "29", "KHOOR", "Shift=29 (normalized to 3)", cipher);
+        test("XYZ", "52", "XYZ", "Shift=52 (normalized to 0)", cipher);
+        test("HELLO", "-27", "GDKKN", "Shift=-27 (normalized to -1)", cipher);
+        test("HELLO", "-30", "DAHHK", "Shift=-30 (normalized to -4)", cipher);
+        test("ABC", "-26", "ABC", "Shift=-26 (normalized to 0)", cipher);
     }
     
     /**
@@ -124,10 +122,12 @@ public class MonoalphabeticTest {
     private static void testEncryptDecryptRoundTrip(MonoalphabeticCipher cipher) {
         System.out.println("\n--- Test Category 8: Encrypt-Decrypt Round Trip ---");
         
-        roundTripTest("HELLO", VALID_KEY, "Test 1", cipher);
-        roundTripTest("THE QUICK BROWN FOX", VALID_KEY, "Test 2", cipher);
-        roundTripTest("ABCDEFGHIJKLMNOPQRSTUVWXYZ", VALID_KEY, "Test 3", cipher);
-        roundTripTest("Hello World 123!", VALID_KEY, "Test 4", cipher);
+        roundTripTest("HELLO", "3", "Test 1", cipher);
+        roundTripTest("THE QUICK BROWN FOX", "5", "Test 2", cipher);
+        roundTripTest("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "13", "Test 3", cipher);
+        roundTripTest("Hello World 123!", "-7", "Test 4", cipher);
+        roundTripTest("TEST", "27", "Test 5 (large shift)", cipher);
+        roundTripTest("TEST", "-53", "Test 6 (large negative shift)", cipher);
     }
     
     /**
@@ -141,34 +141,17 @@ public class MonoalphabeticTest {
             if (actualCiphertext.equals(expectedCiphertext)) {
                 System.out.println("PASS: " + description);
                 System.out.println("  Plaintext: " + plaintext);
+                System.out.println("  Key: " + key);
                 System.out.println("  Ciphertext: " + actualCiphertext);
                 passCount++;
             } else {
                 System.out.println("FAIL: " + description);
                 System.out.println("  Plaintext: " + plaintext);
+                System.out.println("  Key: " + key);
                 System.out.println("  Expected: " + expectedCiphertext);
                 System.out.println("  Actual: " + actualCiphertext);
                 failCount++;
             }
-        } catch (Exception e) {
-            System.out.println("ERROR: " + description);
-            System.out.println("  Exception: " + e.getMessage());
-            failCount++;
-        }
-    }
-    
-    /**
-     * Helper method to encrypt and display result without checking
-     */
-    private static void encryptAndCheck(String plaintext, String key, String description, MonoalphabeticCipher cipher) {
-        testCount++;
-        try {
-            String result = cipher.encrypt(plaintext, key);
-            System.out.println("INFO: " + description);
-            System.out.println("  Plaintext: " + plaintext);
-            System.out.println("  Key length: " + key.length());
-            System.out.println("  Result: " + result);
-            passCount++; // Count as pass since we're just checking it doesn't crash
         } catch (Exception e) {
             System.out.println("ERROR: " + description);
             System.out.println("  Exception: " + e.getMessage());
@@ -185,7 +168,7 @@ public class MonoalphabeticTest {
             String ciphertext = cipher.encrypt(plaintext, key);
             String decrypted = cipher.decrypt(ciphertext, key);
             
-            if (plaintext.equals(decrypted)) {
+            if (plaintext.toUpperCase().equals(decrypted)) {
                 System.out.println("PASS: " + description);
                 System.out.println("  Original: " + plaintext);
                 System.out.println("  Decrypted: " + decrypted);
@@ -217,4 +200,3 @@ public class MonoalphabeticTest {
         System.out.println("========================================\n");
     }
 }
-

@@ -28,16 +28,16 @@ public class CombinedTest {
         System.out.println("--- Test Category: Encrypt-Decrypt Round Trip ---");
         
         // Test Monoalphabetic + Vigenere
-        roundTripTestMonoVigenere("HELLO WORLD", "QWERTYUIOPASDFGHJKLZXCVBNM", "KEY", "Mono+Vigenere Test 1");
-        roundTripTestMonoVigenere("THE QUICK BROWN FOX", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "LEMON", "Mono+Vigenere Test 2");
+        roundTripTestMonoVigenere("HELLO WORLD", "3", "KEY", "Mono+Vigenere Test 1");
+        roundTripTestMonoVigenere("THE QUICK BROWN FOX", "5", "LEMON", "Mono+Vigenere Test 2");
         
         // Test Monoalphabetic + Playfair
-        roundTripTestMonoPlayfair("HELLO", "QWERTYUIOPASDFGHJKLZXCVBNM", "KEY", "Mono+Playfair Test 1");
-        roundTripTestMonoPlayfair("TESTING", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "MONARCHY", "Mono+Playfair Test 2");
+        roundTripTestMonoPlayfair("HELLO", "3", "KEY", "Mono+Playfair Test 1");
+        roundTripTestMonoPlayfair("TESTING", "13", "MONARCHY", "Mono+Playfair Test 2");
         
         // Test Monoalphabetic + Transposition
-        roundTripTestMonoTransposition("HELLO WORLD", "QWERTYUIOPASDFGHJKLZXCVBNM", "3 1 4 2 5", "Mono+Transposition Test 1");
-        roundTripTestMonoTransposition("ABCDEFGH", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "2 1", "Mono+Transposition Test 2");
+        roundTripTestMonoTransposition("HELLO WORLD", "7", "3 1 4 2 5", "Mono+Transposition Test 1");
+        roundTripTestMonoTransposition("ABCDEFGH", "-3", "2 1", "Mono+Transposition Test 2");
     }
     
     /**

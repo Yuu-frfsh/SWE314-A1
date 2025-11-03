@@ -71,7 +71,7 @@ public class main {
     private static void printMenu() {
         System.out.println("\n----- Main Menu -----");
         System.out.println("ENCRYPTION:");
-        System.out.println("  1. Monoalphabetic Substitution");
+        System.out.println("  1. Monoalphabetic Substitution (Caesar Shift)");
         System.out.println("  2. Vigenere Cipher");
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");
@@ -102,7 +102,7 @@ public class main {
      * Run Monoalphabetic encryption
      */
     private static void runMonoalphabeticEncryption() {
-        System.out.println("\n=== Monoalphabetic Substitution Cipher ===");
+        System.out.println("\n=== Monoalphabetic Substitution Cipher (Caesar Shift) ===");
         MonoalphabeticCipher cipher = new MonoalphabeticCipher();
         cipher.runEncryption();
     }
@@ -158,7 +158,7 @@ public class main {
     private static void runDecryption() {
         System.out.println("\n=== Decryption ===");
         System.out.println("Select algorithm to decrypt:");
-        System.out.println("  1. Monoalphabetic Substitution");
+        System.out.println("  1. Monoalphabetic Substitution (Caesar Shift)");
         System.out.println("  2. Vigenere Cipher");
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");

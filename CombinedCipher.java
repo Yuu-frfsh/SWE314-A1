@@ -82,7 +82,7 @@ public class CombinedCipher implements EncryptionAlgorithm {
         String secondKey = keys[1].trim();
         
         System.out.println("\n--- Step-by-Step Combined Encryption ---");
-        System.out.println("Algorithm 1: Monoalphabetic Substitution");
+        System.out.println("Algorithm 1: Monoalphabetic (Caesar Shift)");
         System.out.println("Algorithm 2: " + algorithm2Name);
         System.out.println("\nOriginal plaintext: " + text);
         
@@ -115,32 +115,25 @@ public class CombinedCipher implements EncryptionAlgorithm {
         }
         
         System.out.println("\n=== Combined Cipher Encryption ===");
-        System.out.println("Combining: Monoalphabetic + " + algorithm2Name);
+        System.out.println("Combining: Monoalphabetic (Caesar) + " + algorithm2Name);
         
         String plaintext = InputValidator.getInput("Enter plaintext: ");
         if (!InputValidator.validateNotEmpty(plaintext, "Plaintext")) {
             return;
         }
         
-        // Get monoalphabetic key
-        String monoKey = InputValidator.getInput("Enter 26-char Monoalphabetic key: ");
-        monoKey = monoKey.toUpperCase();
+        // Get monoalphabetic key (integer shift)
+        String monoKey = InputValidator.getInput("Enter Monoalphabetic shift key (integer, e.g., 3 or -5): ");
         
         if (!InputValidator.validateNotEmpty(monoKey, "Monoalphabetic key")) {
             return;
         }
         
-        if (!InputValidator.validateLength(monoKey, 26, "Monoalphabetic key")) {
-            return;
-        }
-        
-        if (!InputValidator.isAlphabetic(monoKey)) {
-            System.out.println("Error: Monoalphabetic key must contain only alphabetic characters!");
-            return;
-        }
-        
-        if (InputValidator.hasDuplicates(monoKey)) {
-            System.out.println("Error: Monoalphabetic key must not contain duplicate characters!");
+        // Validate it's an integer
+        try {
+            Integer.parseInt(monoKey.trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Monoalphabetic key must be an integer!");
             return;
         }
         

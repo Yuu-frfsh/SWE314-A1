@@ -1,31 +1,59 @@
 /**
- * Monoalphabetic Substitution Cipher Implementation
- * Replaces each letter with another letter based on a fixed mapping
+ * Monoalphabetic Substitution Cipher Implementation (Caesar Cipher)
+ * Shifts each letter by a fixed number of positions in the alphabet
  */
 public class MonoalphabeticCipher implements EncryptionAlgorithm {
     
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
     /**
-     * Encrypts plaintext using monoalphabetic substitution
+     * Normalizes shift value to handle values beyond ±26
+     * @param shift The shift value
+     * @return Normalized shift value in range [-25, 25]
+     */
+    private int normalizeShift(int shift) {
+        // Handle positive shifts > 26
+        while (shift > 25) {
+            shift -= 26;
+        }
+        // Handle negative shifts < -26
+        while (shift < -25) {
+            shift += 26;
+        }
+        return shift;
+    }
+    
+    /**
+     * Encrypts plaintext using Caesar cipher shift
      * @param plaintext The text to encrypt
-     * @param key A 26-character permutation of the alphabet
+     * @param key An integer shift value (string format)
      * @return The encrypted ciphertext
      */
     @Override
     public String encrypt(String plaintext, String key) {
+        // Parse integer shift from key string
+        int shift;
+        try {
+            shift = Integer.parseInt(key.trim());
+        } catch (NumberFormatException e) {
+            return "Error: Invalid key format. Expected an integer.";
+        }
+        
+        // Normalize shift
+        shift = normalizeShift(shift);
+        
         // Convert to uppercase for consistency
         plaintext = plaintext.toUpperCase();
-        key = key.toUpperCase();
         
         StringBuilder ciphertext = new StringBuilder();
         
         for (char c : plaintext.toCharArray()) {
             if (Character.isLetter(c)) {
-                // Find position in alphabet and substitute
+                // Find position in alphabet and apply shift
                 int index = ALPHABET.indexOf(c);
                 if (index != -1) {
-                    ciphertext.append(key.charAt(index));
+                    int shiftedIndex = (index + shift + 26) % 26;
+                    ciphertext.append(ALPHABET.charAt(shiftedIndex));
                 }
             } else {
                 // Keep non-alphabetic characters as-is
@@ -37,25 +65,36 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
     }
     
     /**
-     * Decrypts ciphertext using monoalphabetic substitution
+     * Decrypts ciphertext using Caesar cipher shift
      * @param ciphertext The text to decrypt
-     * @param key The 26-character substitution key
+     * @param key An integer shift value (string format)
      * @return The decrypted plaintext
      */
     @Override
     public String decrypt(String ciphertext, String key) {
+        // Parse integer shift from key string
+        int shift;
+        try {
+            shift = Integer.parseInt(key.trim());
+        } catch (NumberFormatException e) {
+            return "Error: Invalid key format. Expected an integer.";
+        }
+        
+        // Normalize shift
+        shift = normalizeShift(shift);
+        
         // Convert to uppercase for consistency
         ciphertext = ciphertext.toUpperCase();
-        key = key.toUpperCase();
         
         StringBuilder plaintext = new StringBuilder();
         
         for (char c : ciphertext.toCharArray()) {
             if (Character.isLetter(c)) {
-                // Find position in key and map back to alphabet
-                int index = key.indexOf(c);
+                // Find position in alphabet and apply reverse shift
+                int index = ALPHABET.indexOf(c);
                 if (index != -1) {
-                    plaintext.append(ALPHABET.charAt(index));
+                    int shiftedIndex = (index - shift + 26) % 26;
+                    plaintext.append(ALPHABET.charAt(shiftedIndex));
                 }
             } else {
                 // Keep non-alphabetic characters as-is
@@ -69,24 +108,39 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
     /**
      * Displays step-by-step encryption process
      * @param text The plaintext
-     * @param key The substitution key
+     * @param key The shift key (integer as string)
      */
     @Override
     public void displaySteps(String text, String key) {
-        text = text.toUpperCase();
-        key = key.toUpperCase();
+        // Parse shift
+        int shift;
+        try {
+            shift = Integer.parseInt(key.trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid key format. Expected an integer.");
+            return;
+        }
         
-        System.out.println("\n--- Step-by-Step Encryption ---");
-        System.out.println("Alphabet:  " + ALPHABET);
-        System.out.println("Key:       " + key);
-        System.out.println("\nPlaintext: " + text);
+        // Normalize shift
+        int originalShift = shift;
+        shift = normalizeShift(shift);
+        
+        text = text.toUpperCase();
+        
+        System.out.println("\n--- Step-by-Step Caesar Cipher Encryption ---");
+        System.out.println("Shift value: " + originalShift + (originalShift != shift ? " (normalized to " + shift + ")" : ""));
+        System.out.println("Alphabet:    " + ALPHABET);
+        System.out.println("Plaintext:   " + text);
         System.out.println("\nCharacter Transformations:");
         
         for (char c : text.toCharArray()) {
             if (Character.isLetter(c)) {
                 int index = ALPHABET.indexOf(c);
                 if (index != -1) {
-                    System.out.println("  " + c + " -> " + key.charAt(index) + " (position " + index + ")");
+                    int shiftedIndex = (index + shift + 26) % 26;
+                    char encryptedChar = ALPHABET.charAt(shiftedIndex);
+                    System.out.println("  " + c + " (pos " + index + ") + " + shift + " -> " + 
+                                      encryptedChar + " (pos " + shiftedIndex + ")");
                 } else {
                     System.out.println("  " + c + " -> " + c + " (not in alphabet)");
                 }
@@ -107,26 +161,17 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
         }
         
         // Get and validate key
-        String key = InputValidator.getInput("Enter 26-character substitution key: ");
-        key = key.toUpperCase();
-        
-        if (!InputValidator.validateNotEmpty(key, "Key")) {
+        String keyInput = InputValidator.getInput("Enter shift key (integer, e.g., 3 or -5): ");
+        int shift;
+        try {
+            shift = Integer.parseInt(keyInput.trim());
+            System.out.println("Shift normalized from " + shift + " to " + normalizeShift(shift));
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Key must be an integer!");
             return;
         }
         
-        if (!InputValidator.validateLength(key, 26, "Key")) {
-            return;
-        }
-        
-        if (!InputValidator.isAlphabetic(key)) {
-            System.out.println("Error: Key must contain only alphabetic characters!");
-            return;
-        }
-        
-        if (InputValidator.hasDuplicates(key)) {
-            System.out.println("Error: Key must not contain duplicate characters!");
-            return;
-        }
+        String key = keyInput.trim();
         
         // Display steps
         displaySteps(plaintext, key);
@@ -143,43 +188,42 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
      * Interactive decryption session
      */
     public void runDecryption(String ciphertext, String key) {
+        // Parse and validate key
+        int shift;
+        try {
+            shift = Integer.parseInt(key.trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Key must be an integer!");
+            return;
+        }
+        
+        // Normalize shift
+        int originalShift = shift;
+        shift = normalizeShift(shift);
+        if (originalShift != shift) {
+            System.out.println("Shift normalized from " + originalShift + " to " + shift);
+        }
+        
         // Convert to uppercase
         ciphertext = ciphertext.toUpperCase();
-        key = key.toUpperCase();
-        
-        // Validate key
-        if (!InputValidator.validateNotEmpty(key, "Key")) {
-            return;
-        }
-        
-        if (!InputValidator.validateLength(key, 26, "Key")) {
-            return;
-        }
-        
-        if (!InputValidator.isAlphabetic(key)) {
-            System.out.println("Error: Key must contain only alphabetic characters!");
-            return;
-        }
-        
-        if (InputValidator.hasDuplicates(key)) {
-            System.out.println("Error: Key must not contain duplicate characters!");
-            return;
-        }
         
         // Display decryption process
-        System.out.println("\n--- Step-by-Step Decryption ---");
-        System.out.println("Alphabet:   " + ALPHABET);
-        System.out.println("Key:        " + key);
-        System.out.println("Ciphertext: " + ciphertext);
+        System.out.println("\n--- Step-by-Step Caesar Cipher Decryption ---");
+        System.out.println("Shift value: " + shift);
+        System.out.println("Alphabet:    " + ALPHABET);
+        System.out.println("Ciphertext:  " + ciphertext);
         System.out.println("\nCharacter Transformations:");
         
         for (char c : ciphertext.toCharArray()) {
             if (Character.isLetter(c)) {
-                int index = key.indexOf(c);
+                int index = ALPHABET.indexOf(c);
                 if (index != -1) {
-                    System.out.println("  " + c + " -> " + ALPHABET.charAt(index) + " (position " + index + ")");
+                    int shiftedIndex = (index - shift + 26) % 26;
+                    char decryptedChar = ALPHABET.charAt(shiftedIndex);
+                    System.out.println("  " + c + " (pos " + index + ") - " + shift + " -> " + 
+                                      decryptedChar + " (pos " + shiftedIndex + ")");
                 } else {
-                    System.out.println("  " + c + " -> " + c + " (not in key)");
+                    System.out.println("  " + c + " -> " + c + " (not in alphabet)");
                 }
             } else {
                 System.out.println("  " + c + " -> " + c + " (non-letter, kept as-is)");
@@ -194,4 +238,3 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
         System.out.println("Plaintext: " + plaintext);
     }
 }
-
