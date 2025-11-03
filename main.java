@@ -4,8 +4,6 @@ import java.util.Scanner;
  * Main entry point for the Educational Encryption/Decryption Tool
  * Provides menu-driven interface for users to select and use different algorithms
  */
-
- //Abdullah
 public class main {
     
     private static Scanner scanner = new Scanner(System.in);
@@ -73,7 +71,7 @@ public class main {
     private static void printMenu() {
         System.out.println("\n----- Main Menu -----");
         System.out.println("ENCRYPTION:");
-        System.out.println("  1. Monoalphabetic Substitution (Caesar Shift)");
+        System.out.println("  1. Monoalphabetic Substitution");
         System.out.println("  2. Vigenere Cipher");
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");
@@ -104,7 +102,7 @@ public class main {
      * Run Monoalphabetic encryption
      */
     private static void runMonoalphabeticEncryption() {
-        System.out.println("\n=== Monoalphabetic Substitution Cipher (Caesar Shift) ===");
+        System.out.println("\n=== Monoalphabetic Substitution Cipher ===");
         MonoalphabeticCipher cipher = new MonoalphabeticCipher();
         cipher.runEncryption();
     }
@@ -158,9 +156,8 @@ public class main {
      * Run decryption menu
      */
     private static void runDecryption() {
-        System.out.println("\n=== Decryption ===");
-        System.out.println("Select algorithm to decrypt:");
-        System.out.println("  1. Monoalphabetic Substitution (Caesar Shift)");
+        System.out.println("\nSelect algorithm to decrypt:");
+        System.out.println("  1. Monoalphabetic Substitution");
         System.out.println("  2. Vigenere Cipher");
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");
@@ -168,7 +165,19 @@ public class main {
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
             String ciphertext = InputValidator.getInput("Enter ciphertext: ");
-            String key = InputValidator.getInput("Enter key: ");
+            
+            String key;
+            if (choice == 4) {
+                // Keyed Transposition requires 2-line key format
+                System.out.println("\nEnter the 2x5 permutation key:");
+                System.out.println("First row (plaintext indices, e.g., 3 1 4 5 2): ");
+                String firstRow = InputValidator.getInput("");
+                System.out.println("Second row (ciphertext positions, e.g., 1 2 3 4 5): ");
+                String secondRow = InputValidator.getInput("");
+                key = firstRow + "\n" + secondRow;
+            } else {
+                key = InputValidator.getInput("Enter key: ");
+            }
             
             switch (choice) {
                 case 1:

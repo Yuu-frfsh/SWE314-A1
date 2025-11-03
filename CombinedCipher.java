@@ -141,13 +141,19 @@ public class CombinedCipher implements EncryptionAlgorithm {
         String secondKey;
         if (algorithm2 instanceof VigenereCipher) {
             secondKey = InputValidator.getInput("Enter Vigenere keyword: ");
+            secondKey = secondKey.toUpperCase();
         } else if (algorithm2 instanceof PlayfairCipher) {
             secondKey = InputValidator.getInput("Enter Playfair keyword: ");
+            secondKey = secondKey.toUpperCase();
         } else {
-            secondKey = InputValidator.getInput("Enter Transposition key (numbers separated by spaces): ");
+            // Keyed Transposition requires 2-line key format
+            System.out.println("\nEnter the 2x5 permutation key:");
+            System.out.println("First row (plaintext indices, e.g., 3 1 4 5 2): ");
+            String firstRow = InputValidator.getInput("");
+            System.out.println("Second row (ciphertext positions, e.g., 1 2 3 4 5): ");
+            String secondRow = InputValidator.getInput("");
+            secondKey = firstRow + "\n" + secondRow;
         }
-        
-        secondKey = secondKey.toUpperCase();
         
         if (!InputValidator.validateNotEmpty(secondKey, "Second key")) {
             return;
