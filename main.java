@@ -161,6 +161,7 @@ public class main {
         System.out.println("  2. Vigenere Cipher");
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");
+        System.out.println("  5. DES (simplified)");
         
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -195,6 +196,10 @@ public class main {
                 case 4:
                     KeyedTranspositionCipher cipher4 = new KeyedTranspositionCipher();
                     cipher4.runDecryption(ciphertext, key);
+                    break;
+                case 5:
+                    DESCipher cipher5 = new DESCipher();
+                    cipher5.runDecryption(ciphertext, key);
                     break;
                 default:
                     System.out.println("Invalid choice.");
