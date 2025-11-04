@@ -127,7 +127,7 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
         
         text = text.toUpperCase();
         
-        System.out.println("\n--- Step-by-Step Caesar Cipher Encryption ---");
+        System.out.println("\n--- Step-by-Step Monoalphabetic Cipher Encryption ---");
         System.out.println("Shift value: " + originalShift + (originalShift != shift ? " (normalized to " + shift + ")" : ""));
         System.out.println("Alphabet:    " + ALPHABET);
         System.out.println("Plaintext:   " + text);
@@ -208,7 +208,7 @@ public class MonoalphabeticCipher implements EncryptionAlgorithm {
         ciphertext = ciphertext.toUpperCase();
         
         // Display decryption process
-        System.out.println("\n--- Step-by-Step Caesar Cipher Decryption ---");
+        System.out.println("\n--- Step-by-Step Monoalphabetic Cipher Decryption ---");
         System.out.println("Shift value: " + shift);
         System.out.println("Alphabet:    " + ALPHABET);
         System.out.println("Ciphertext:  " + ciphertext);

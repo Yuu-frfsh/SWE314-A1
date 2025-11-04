@@ -76,7 +76,7 @@ public class main {
         System.out.println("  3. Playfair Cipher");
         System.out.println("  4. Keyed Transposition");
         System.out.println("  5. Combined Encryption");
-        System.out.println("  6. DES (simplified)");
+        System.out.println("  6. DES");
         System.out.println("\nDECRYPTION:");
         System.out.println("  7. Decrypt Text");
         System.out.println("\nCRYPTANALYSIS:");
@@ -147,7 +147,7 @@ public class main {
      * Run DES encryption
      */
     private static void runDESEncryption() {
-        System.out.println("\n=== DES Cipher (Simplified) ===");
+        System.out.println("\n=== DES Cipher ===");
         DESCipher cipher = new DESCipher();
         cipher.runEncryption();
     }
@@ -156,19 +156,17 @@ public class main {
      * Run decryption menu
      */
     private static void runDecryption() {
-        System.out.println("\nSelect algorithm to decrypt:");
+        System.out.println("\n=== Decryption ===");
+        System.out.println("Select algorithm to decrypt:");
         System.out.println("  1. Monoalphabetic Substitution");
-        System.out.println("  2. Vigenere Cipher");
-        System.out.println("  3. Playfair Cipher");
-        System.out.println("  4. Keyed Transposition");
-        System.out.println("  5. DES (simplified)");
+        System.out.println("  2. Keyed Transposition");
         
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
             String ciphertext = InputValidator.getInput("Enter ciphertext: ");
             
             String key;
-            if (choice == 4) {
+            if (choice == 2) {
                 // Keyed Transposition requires 2-line key format
                 System.out.println("\nEnter the 2x5 permutation key:");
                 System.out.println("First row (plaintext indices, e.g., 3 1 4 5 2): ");
@@ -186,20 +184,8 @@ public class main {
                     cipher1.runDecryption(ciphertext, key);
                     break;
                 case 2:
-                    VigenereCipher cipher2 = new VigenereCipher();
+                    KeyedTranspositionCipher cipher2 = new KeyedTranspositionCipher();
                     cipher2.runDecryption(ciphertext, key);
-                    break;
-                case 3:
-                    PlayfairCipher cipher3 = new PlayfairCipher();
-                    cipher3.runDecryption(ciphertext, key);
-                    break;
-                case 4:
-                    KeyedTranspositionCipher cipher4 = new KeyedTranspositionCipher();
-                    cipher4.runDecryption(ciphertext, key);
-                    break;
-                case 5:
-                    DESCipher cipher5 = new DESCipher();
-                    cipher5.runDecryption(ciphertext, key);
                     break;
                 default:
                     System.out.println("Invalid choice.");

@@ -316,8 +316,7 @@ public class DESCipher implements EncryptionAlgorithm {
     /** Display step-by-step encryption process */
     @Override
     public void displaySteps(String text, String key) {
-        System.out.println("\n--- Step-by-Step DES Encryption (Simplified) ---");
-        System.out.println("WARNING: This is an educational simplified version, NOT secure DES!");
+        System.out.println("\n--- Step-by-Step DES Encryption ---");
         System.out.println("Plaintext: " + text);
         System.out.println("Key: " + key);
         System.out.println("\n1. Converting plaintext to binary (UTF-8)");
@@ -332,8 +331,7 @@ public class DESCipher implements EncryptionAlgorithm {
     
     /** Interactive encryption session */
     public void runEncryption() {
-        System.out.println("\n=== Simplified DES Cipher ===");
-        System.out.println("WARNING: This is an educational simplified version, NOT secure DES!");
+        System.out.println("\n=== DES Cipher ===");
         
         String plaintext = InputValidator.getInput("Enter plaintext (up to 8 characters): ");
         if (!InputValidator.validateNotEmpty(plaintext, "Plaintext")) {
@@ -341,7 +339,6 @@ public class DESCipher implements EncryptionAlgorithm {
         }
         
         if (plaintext.length() > 8) {
-            System.out.println("Warning: Plaintext longer than 8 characters will be truncated to fit DES block size.");
             plaintext = plaintext.substring(0, 8);
         }
         
@@ -351,7 +348,6 @@ public class DESCipher implements EncryptionAlgorithm {
         }
         
         if (key.length() > 8) {
-            System.out.println("Warning: Key longer than 8 characters will be truncated.");
             key = key.substring(0, 8);
         }
         
@@ -364,13 +360,11 @@ public class DESCipher implements EncryptionAlgorithm {
     
     /** Interactive decryption session */
     public void runDecryption(String ciphertext, String key) {
-        System.out.println("\n--- Step-by-Step DES Decryption (Simplified) ---");
-        System.out.println("WARNING: This is an educational simplified version, NOT secure DES!");
+        System.out.println("\n--- Step-by-Step DES Decryption ---");
         System.out.println("Ciphertext (hex): " + ciphertext);
         System.out.println("Key: " + key);
         
         if (key.length() > 8) {
-            System.out.println("Warning: Key longer than 8 characters will be truncated.");
             key = key.substring(0, 8);
         }
         
