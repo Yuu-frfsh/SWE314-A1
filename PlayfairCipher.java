@@ -274,6 +274,20 @@ public class PlayfairCipher implements EncryptionAlgorithm {
             return;
         }
         
+        // Validate that plaintext contains only alphabetic characters and spaces
+        String plaintextUpper = plaintext.toUpperCase();
+        String allowedChars = plaintextUpper.replaceAll("[^A-Z ]", "");
+        if (allowedChars.replaceAll(" ", "").isEmpty()) {
+            System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
+            System.out.println("Playfair cipher does not support symbols or numbers.");
+            return;
+        }
+        if (!plaintextUpper.equals(allowedChars)) {
+            System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
+            System.out.println("Playfair cipher does not support symbols or numbers.");
+            return;
+        }
+        
         String key = InputValidator.getInput("Enter keyword: ");
         key = key.toUpperCase();
         
@@ -298,7 +312,25 @@ public class PlayfairCipher implements EncryptionAlgorithm {
      * Interactive decryption session
      */
     public void runDecryption(String ciphertext, String key) {
-        ciphertext = ciphertext.toUpperCase();
+        if (!InputValidator.validateNotEmpty(ciphertext, "Ciphertext")) {
+            return;
+        }
+        
+        // Validate that ciphertext contains only alphabetic characters and spaces
+        String ciphertextUpper = ciphertext.toUpperCase();
+        String allowedChars = ciphertextUpper.replaceAll("[^A-Z ]", "");
+        if (allowedChars.replaceAll(" ", "").isEmpty()) {
+            System.out.println("Error: Ciphertext must contain only alphabetic characters (A-Z, a-z)!");
+            System.out.println("Playfair cipher does not support symbols or numbers.");
+            return;
+        }
+        if (!ciphertextUpper.equals(allowedChars)) {
+            System.out.println("Error: Ciphertext must contain only alphabetic characters (A-Z, a-z)!");
+            System.out.println("Playfair cipher does not support symbols or numbers.");
+            return;
+        }
+        
+        ciphertext = ciphertextUpper;
         key = key.toUpperCase();
         
         if (!InputValidator.validateNotEmpty(key, "Keyword")) {

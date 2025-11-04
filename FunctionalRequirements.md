@@ -36,30 +36,31 @@ This document outlines the functional requirements for the Educational Encryptio
 - Maintain educational clarity
 
 **FR-2.3:** The system shall show algorithm-specific information:
-- Monoalphabetic: Character mappings
+- Monoalphabetic: Character mappings and shift calculations
 - Vigenere: Key alignment and shift amounts
 - Playfair: 5x5 matrix and digraph handling
-- Transposition: Grid layout and column ordering
-- DES: XOR operations and intermediate values
+- Keyed Transposition: 2x5 permutation matrix and block transformations
+- DES: Feistel rounds, S-box operations, and intermediate values
 
 ## 3. Algorithm-Specific Requirements
 
-### 3.1 Monoalphabetic Substitution Cipher
+### 3.1 Monoalphabetic Substitution Cipher (Caesar Cipher)
 
-**FR-3.1.1:** The system shall encrypt using monoalphabetic substitution
-- **Input:** Plaintext, 26-character substitution key
+**FR-3.1.1:** The system shall encrypt using monoalphabetic substitution (Caesar shift)
+- **Input:** Plaintext, integer shift key (e.g., 3, -5)
 - **Output:** Ciphertext
-- **Process:** Map each letter through substitution table
+- **Process:** Shift each letter by the specified number of positions in the alphabet
+- Shifts beyond ±26 are automatically normalized
 
 **FR-3.1.2:** The system shall decrypt monoalphabetic ciphertext
-- **Input:** Ciphertext, 26-character substitution key
+- **Input:** Ciphertext, integer shift key
 - **Output:** Plaintext
-- **Process:** Reverse the substitution mapping
+- **Process:** Reverse shift by subtracting the shift value
 
 **FR-3.1.3:** The system shall validate monoalphabetic keys
-- Key must be exactly 26 characters
-- Key must contain unique letters only
-- Key must be alphabetic only
+- Key must be a valid integer
+- Key can be positive or negative
+- System automatically normalizes keys outside range [-25, 25]
 
 **FR-3.1.4:** The system shall preserve non-alphabetic characters
 - Spaces, numbers, and special characters remain unchanged
@@ -112,23 +113,26 @@ This document outlines the functional requirements for the Educational Encryptio
 
 ### 3.4 Keyed Transposition Cipher
 
-**FR-3.4.1:** The system shall encrypt using keyed transposition
-- **Input:** Plaintext, numeric/alphabetic key
-- **Output:** Ciphertext
-- **Process:** Write in rows, read columns by key order
+**FR-3.4.1:** The system shall encrypt using keyed transposition with 2x5 permutation matrix
+- **Input:** Plaintext, 2x5 permutation key (two lines: plaintext indices and ciphertext positions)
+- **Input Format:** First line contains 5 integers (1-indexed plaintext positions), second line contains 5 integers (1-indexed ciphertext positions)
+- **Output:** Ciphertext (uppercase, block-based)
+- **Process:** Process plaintext in blocks of 5 characters, apply permutation according to key matrix
 
 **FR-3.4.2:** The system shall decrypt keyed transposition
-- **Input:** Ciphertext, key
+- **Input:** Ciphertext, 2x5 permutation key (same format as encryption)
 - **Output:** Plaintext
-- **Process:** Reconstruct grid using key ordering
+- **Process:** Reverse the permutation for each 5-character block
 
 **FR-3.4.3:** The system shall handle padding
-- Add X characters to fill grid
-- Remove padding during decryption
+- Pad plaintext to length divisible by 5 using 'z' character
+- Remove 'z' padding characters during decryption
+- Spaces are removed from plaintext before processing
 
-**FR-3.4.4:** The system shall display grid layout
-- Show row/column arrangement
-- Display column reading order
+**FR-3.4.4:** The system shall display the 2x5 matrix format
+- Show both rows of the key matrix
+- Display block-by-block transformation
+- Explain permutation mapping
 
 ### 3.5 Combined Cipher
 
@@ -157,12 +161,17 @@ This document outlines the functional requirements for the Educational Encryptio
 - **Output:** Hexadecimal ciphertext
 
 **FR-3.6.2:** The system shall encrypt using simplified DES
-- XOR plaintext with key
-- Convert to hex format
+- **Process:** Full DES algorithm with 16 rounds, Feistel network, S-boxes, and key schedule
+- Convert plaintext (UTF-8) to binary, process in 64-bit blocks
+- Apply initial permutation (IP), 16 Feistel rounds, final permutation (IP^-1)
+- Convert binary result to hexadecimal format
+- Key schedule generates 16 round keys from 64-bit key using PC1, PC2, and key shifts
 
 **FR-3.6.3:** The system shall decrypt simplified DES
-- Parse hex input
-- XOR to recover plaintext
+- Parse hexadecimal ciphertext input
+- Convert hex to binary, process in 64-bit blocks
+- Apply reverse DES algorithm: initial permutation, 16 Feistel rounds (with reverse key order), final permutation
+- Convert binary result back to UTF-8 plaintext string
 
 **FR-3.6.4:** The system shall clearly warn users
 - Display that this is NOT secure DES
@@ -184,10 +193,17 @@ This document outlines the functional requirements for the Educational Encryptio
 - Display expected vs actual percentages
 - Highlight significant deviations
 
-**FR-3.7.4:** The system shall suggest substitutions
+**FR-3.7.4:** The system shall suggest substitutions and auto-decrypt
 - Identify most frequent ciphertext letters
 - Match with most frequent English letters
 - Provide substitution suggestions
+- Automatically detect encryption key using correlation analysis (for monoalphabetic ciphers)
+  - Test all possible shift values (0-25)
+  - Calculate Pearson correlation coefficient for each shift
+  - Return the shift with highest correlation (threshold > 0.3)
+- Automatically decrypt ciphertext using detected key
+- Display detected key and decrypted plaintext
+- Indicate if key detection failed (wrong cipher type or insufficient sample size)
 
 ## 4. Input/Output Requirements
 
@@ -290,59 +306,29 @@ This document outlines the functional requirements for the Educational Encryptio
 - Tests compile and run standalone
 - Clear test output
 
-## 9. Non-Functional Requirements
+## 9. Summary
 
-### 9.1 Performance
+This educational encryption tool implements six encryption algorithms, decryption functionality, and cryptanalysis tools. The system provides:
 
-**NFR-1:** System shall respond quickly to user input
-- Console operations should be immediate
-- No noticeable delays for educational text sizes
+**Encryption Algorithms:**
+- Monoalphabetic Substitution (Caesar Cipher) - integer shift-based encryption
+- Vigenere Cipher - keyword-based polyalphabetic encryption
+- Playfair Cipher - digraph-based encryption using 5x5 matrix
+- Keyed Transposition Cipher - block permutation using 2x5 matrix
+- Combined Cipher - sequential application of Monoalphabetic + another algorithm
+- DES (Simplified) - educational implementation of Data Encryption Standard
 
-**NFR-2:** System shall handle reasonable text sizes
-- Support texts up to several hundred characters
-- Educational examples only
+**Decryption Capabilities:**
+- All encryption algorithms support corresponding decryption operations
+- Decryption can be performed through the main menu for any algorithm
 
-### 9.2 Usability
+**Cryptanalysis Tools:**
+- Frequency Analysis with automatic key detection and decryption for monoalphabetic ciphers
+- Letter frequency comparison with English language statistics
+- Substitution suggestions based on frequency patterns
 
-**NFR-3:** System shall be easy to use
-- Clear menu navigation
-- Intuitive prompts
-- Helpful error messages
+The focus is on learning and understanding cryptographic concepts through interactive, step-by-step demonstrations. All implementations are verified through comprehensive testing using Input Space Partitioning methodology.
 
-**NFR-4:** System shall be educational
-- Step-by-step displays aid learning
-- Algorithm workings clearly visible
+The system successfully meets its educational objectives by providing clear, step-by-step displays of algorithm workings, comprehensive input validation, and thorough error handling to guide users in understanding cryptography.
 
-### 9.3 Maintainability
-
-**NFR-5:** Code shall be well-organized
-- Clear class structure
-- Consistent naming conventions
-- Comments explaining complex logic
-
-**NFR-6:** Code shall be modular
-- Each algorithm in separate class
-- Common interface for algorithms
-- Reusable utilities
-
-## 10. Implementation Requirements
-
-### 10.1 Technology Stack
-
-**IM-1:** Language: Java
-**IM-2:** Interface: Console/Command Line
-**IM-3:** Testing: Unit tests with Input Space Partitioning
-
-### 10.2 Code Organization
-
-**IM-4:** Follow object-oriented principles
-**IM-5:** Implement proper interfaces
-**IM-6:** Validate inputs consistently
-**IM-7:** Handle errors appropriately
-
-## 11. Summary
-
-This educational encryption tool implements six encryption algorithms, decryption functionality, and cryptanalysis tools. The focus is on learning and understanding cryptographic concepts through interactive, step-by-step demonstrations. All implementations are verified through comprehensive testing using Input Space Partitioning methodology.
-
-The system successfully meets its educational objectives while maintaining code quality, clear documentation, and thorough testing as required by the assignment specifications.
 

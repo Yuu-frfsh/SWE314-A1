@@ -331,8 +331,6 @@ public class DESCipher implements EncryptionAlgorithm {
     
     /** Interactive encryption session */
     public void runEncryption() {
-        System.out.println("\n=== DES Cipher ===");
-        
         String plaintext = InputValidator.getInput("Enter plaintext (up to 8 characters): ");
         if (!InputValidator.validateNotEmpty(plaintext, "Plaintext")) {
             return;
