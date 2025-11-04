@@ -82,7 +82,7 @@ public class CombinedCipher implements EncryptionAlgorithm {
         String secondKey = keys[1].trim();
         
         System.out.println("\n--- Step-by-Step Combined Encryption ---");
-        System.out.println("Algorithm 1: Monoalphabetic (Caesar Shift)");
+        System.out.println("Algorithm 1: Monoalphabetic");
         System.out.println("Algorithm 2: " + algorithm2Name);
         System.out.println("\nOriginal plaintext: " + text);
         
@@ -115,7 +115,7 @@ public class CombinedCipher implements EncryptionAlgorithm {
         }
         
         System.out.println("\n=== Combined Cipher Encryption ===");
-        System.out.println("Combining: Monoalphabetic (Caesar) + " + algorithm2Name);
+        System.out.println("Combining: Monoalphabetic + " + algorithm2Name);
         
         String plaintext = InputValidator.getInput("Enter plaintext: ");
         if (!InputValidator.validateNotEmpty(plaintext, "Plaintext")) {
@@ -178,6 +178,7 @@ public class CombinedCipher implements EncryptionAlgorithm {
         System.out.println("  1. Vigenere");
         System.out.println("  2. Playfair");
         System.out.println("  3. Keyed Transposition");
+        System.out.print("Enter your choice: ");
         
         int choice = -1;
         try {
