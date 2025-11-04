@@ -279,12 +279,10 @@ public class PlayfairCipher implements EncryptionAlgorithm {
         String allowedChars = plaintextUpper.replaceAll("[^A-Z ]", "");
         if (allowedChars.replaceAll(" ", "").isEmpty()) {
             System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
-            System.out.println("Playfair cipher does not support symbols or numbers.");
             return;
         }
         if (!plaintextUpper.equals(allowedChars)) {
             System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
-            System.out.println("Playfair cipher does not support symbols or numbers.");
             return;
         }
         
@@ -321,12 +319,10 @@ public class PlayfairCipher implements EncryptionAlgorithm {
         String allowedChars = ciphertextUpper.replaceAll("[^A-Z ]", "");
         if (allowedChars.replaceAll(" ", "").isEmpty()) {
             System.out.println("Error: Ciphertext must contain only alphabetic characters (A-Z, a-z)!");
-            System.out.println("Playfair cipher does not support symbols or numbers.");
             return;
         }
         if (!ciphertextUpper.equals(allowedChars)) {
             System.out.println("Error: Ciphertext must contain only alphabetic characters (A-Z, a-z)!");
-            System.out.println("Playfair cipher does not support symbols or numbers.");
             return;
         }
         
