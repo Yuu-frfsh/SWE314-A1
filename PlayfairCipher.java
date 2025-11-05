@@ -294,39 +294,5 @@ public class PlayfairCipher implements EncryptionAlgorithm {
         System.out.println("Ciphertext: " + ciphertext);
     }
     
-    /**
-     * Interactive decryption session
-     */
-    public void runDecryption(String ciphertext, String key) {
-        ciphertext = ciphertext.toUpperCase();
-        key = key.toUpperCase();
-        
-        if (!InputValidator.validateNotEmpty(key, "Keyword")) {
-            return;
-        }
-        
-        if (!InputValidator.isAlphabetic(key)) {
-            System.out.println("Error: Keyword must contain only alphabetic characters!");
-            return;
-        }
-        
-        String matrix = buildMatrix(key);
-        
-        System.out.println("\n--- Step-by-Step Playfair Decryption ---");
-        System.out.println("5x5 Key Matrix:");
-        for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 5; col++) {
-                System.out.print(matrix.charAt(row * 5 + col) + " ");
-            }
-            System.out.println();
-        }
-        
-        System.out.println("\nCiphertext: " + ciphertext);
-        
-        String plaintext = decrypt(ciphertext, key);
-        
-        System.out.println("\n--- Result ---");
-        System.out.println("Plaintext: " + plaintext);
-    }
 }
 

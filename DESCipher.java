@@ -331,8 +331,6 @@ public class DESCipher implements EncryptionAlgorithm {
     
     /** Interactive encryption session */
     public void runEncryption() {
-        System.out.println("\n=== DES Cipher ===");
-        
         String plaintext = InputValidator.getInput("Enter plaintext (up to 8 characters): ");
         if (!InputValidator.validateNotEmpty(plaintext, "Plaintext")) {
             return;
@@ -356,27 +354,6 @@ public class DESCipher implements EncryptionAlgorithm {
         String ciphertext = encrypt(plaintext, key);
         System.out.println("\n--- Result ---");
         System.out.println("Ciphertext (hex): " + ciphertext);
-    }
-    
-    /** Interactive decryption session */
-    public void runDecryption(String ciphertext, String key) {
-        System.out.println("\n--- Step-by-Step DES Decryption ---");
-        System.out.println("Ciphertext (hex): " + ciphertext);
-        System.out.println("Key: " + key);
-        
-        if (key.length() > 8) {
-            key = key.substring(0, 8);
-        }
-        
-        System.out.println("\n1. Converting hex ciphertext to binary");
-        System.out.println("2. Building key schedule from key");
-        System.out.println("3. Reversing encryption process (16 rounds in reverse order)");
-        System.out.println("4. Converting binary result to UTF-8 string");
-        
-        String plaintext = decrypt(ciphertext, key);
-        
-        System.out.println("\n--- Result ---");
-        System.out.println("Plaintext: " + plaintext);
     }
     
     /** Test main */

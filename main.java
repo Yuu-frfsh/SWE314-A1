@@ -160,6 +160,7 @@ public class main {
         System.out.println("Select algorithm to decrypt:");
         System.out.println("  1. Monoalphabetic Substitution");
         System.out.println("  2. Keyed Transposition");
+        System.out.print("Enter your choice: ");
         
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());

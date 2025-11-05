@@ -156,54 +156,5 @@ public class VigenereCipher implements EncryptionAlgorithm {
         System.out.println("Ciphertext: " + ciphertext);
     }
     
-    /**
-     * Interactive decryption session
-     */
-    public void runDecryption(String ciphertext, String key) {
-        // Convert to uppercase
-        ciphertext = ciphertext.toUpperCase();
-        key = key.toUpperCase();
-        
-        // Validate key
-        if (!InputValidator.validateNotEmpty(key, "Keyword")) {
-            return;
-        }
-        
-        if (!InputValidator.isAlphabetic(key)) {
-            System.out.println("Error: Keyword must contain only alphabetic characters!");
-            return;
-        }
-        
-        // Display decryption process
-        System.out.println("\n--- Step-by-Step Vigenere Decryption ---");
-        System.out.println("Alphabet:   " + ALPHABET);
-        System.out.println("Keyword:    " + key);
-        System.out.println("Ciphertext: " + ciphertext);
-        System.out.println("\nCharacter Transformations:");
-        
-        int keyIndex = 0;
-        for (char c : ciphertext.toCharArray()) {
-            if (Character.isLetter(c)) {
-                char keyChar = key.charAt(keyIndex % key.length());
-                int ciphertextPos = ALPHABET.indexOf(c);
-                int keyPos = ALPHABET.indexOf(keyChar);
-                int plaintextPos = (ciphertextPos - keyPos + 26) % 26;
-                
-                System.out.println(String.format("  %c - %c = %c (pos %d - pos %d = pos %d)", 
-                    c, keyChar, ALPHABET.charAt(plaintextPos), ciphertextPos, keyPos, plaintextPos));
-                
-                keyIndex++;
-            } else {
-                System.out.println("  " + c + " -> " + c + " (non-letter, kept as-is)");
-            }
-        }
-        
-        // Perform decryption
-        String plaintext = decrypt(ciphertext, key);
-        
-        // Display result
-        System.out.println("\n--- Result ---");
-        System.out.println("Plaintext: " + plaintext);
-    }
 }
 
