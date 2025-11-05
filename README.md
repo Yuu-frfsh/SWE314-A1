@@ -32,15 +32,6 @@ This is an educational tool designed to help users learn the basics of cryptogra
 ### Cryptanalysis
 - `FrequencyAnalysis.java` - Letter frequency analysis tool
 
-### Testing
-- `MonoalphabeticTest.java` - Unit tests for Monoalphabetic cipher
-- `VigenereTest.java` - Unit tests for Vigenere cipher
-- `PlayfairTest.java` - Unit tests for Playfair cipher
-- `KeyedTranspositionTest.java` - Unit tests for Keyed Transposition
-- `CombinedTest.java` - Unit tests for Combined cipher
-- `DESTest.java` - Unit tests for DES cipher
-- `FrequencyAnalysisTest.java` - Unit tests for Frequency Analysis
-
 ## How to Compile and Run
 
 ### Prerequisites
@@ -58,31 +49,6 @@ javac *.java
 java main
 ```
 
-### Running Individual Tests
-To test specific algorithms:
-```bash
-# Monoalphabetic tests
-java MonoalphabeticTest
-
-# Vigenere tests
-java VigenereTest
-
-# Playfair tests
-java PlayfairTest
-
-# Keyed Transposition tests
-java KeyedTranspositionTest
-
-# Combined cipher tests
-java CombinedTest
-
-# DES tests
-java DESTest
-
-# Frequency Analysis tests
-java FrequencyAnalysisTest
-```
-
 ## Usage Guide
 
 ### Main Menu
@@ -94,7 +60,7 @@ Upon running the program, you'll see a menu with the following options:
 3. Playfair Cipher
 4. Keyed Transposition
 5. Combined Encryption
-6. DES (simplified)
+6. DES
 
 **Decryption:**
 7. Decrypt Text
