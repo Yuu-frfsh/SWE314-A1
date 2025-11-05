@@ -274,6 +274,18 @@ public class PlayfairCipher implements EncryptionAlgorithm {
             return;
         }
         
+        // Validate that plaintext contains only alphabetic characters and spaces
+        String plaintextUpper = plaintext.toUpperCase();
+        String allowedChars = plaintextUpper.replaceAll("[^A-Z ]", "");
+        if (allowedChars.replaceAll(" ", "").isEmpty()) {
+            System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
+            return;
+        }
+        if (!plaintextUpper.equals(allowedChars)) {
+            System.out.println("Error: Plaintext must contain only alphabetic characters (A-Z, a-z)!");
+            return;
+        }
+        
         String key = InputValidator.getInput("Enter keyword: ");
         key = key.toUpperCase();
         
@@ -293,6 +305,5 @@ public class PlayfairCipher implements EncryptionAlgorithm {
         System.out.println("\n--- Result ---");
         System.out.println("Ciphertext: " + ciphertext);
     }
-    
 }
 

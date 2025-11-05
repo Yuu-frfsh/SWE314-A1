@@ -250,7 +250,7 @@ FUNCTION encrypt(plaintext, key):
         
         // Pad if needed
         WHILE length(block) < 5:
-            block += "X"
+            block += 'z'
         
         // Create cipher block using transposition
         cipherBlock = array of 5 characters
@@ -336,13 +336,13 @@ FUNCTION encrypt(plaintext, key):
     keyBinary = keyStringTo64BitBinary(key)
     
     // Generate 16 round keys
-    roundKeys = generateRoundKeys(keyBinary)
+    roundKeys = buildKeySchedule(keyBinary)
     
     ciphertext = ""
     
     // Process each 8-character block
     FOR each 8-char block in plaintext:
-        blockBinary = stringTo64BitBinary(block)
+        blockBinary = utfToBin(block)
         
         // Initial Permutation
         permuted = permute(blockBinary, IP)
@@ -363,7 +363,7 @@ FUNCTION encrypt(plaintext, key):
         // Final Permutation
         cipherBlock = permute(combined, IPinverse)
         
-        ciphertext += binaryToHex(cipherBlock)
+        ciphertext += binToHex(cipherBlock)
     
     RETURN ciphertext
 ```
@@ -388,7 +388,7 @@ FUNCTION feistelFunction(rightHalf, roundKey):
 
 ### Key Generation
 ```
-FUNCTION generateRoundKeys(key64bit):
+FUNCTION buildKeySchedule(key64bit):
     // PC1 permutation (64 → 56 bits)
     key56 = permute(key64bit, PC1)
     
@@ -414,7 +414,7 @@ FUNCTION generateRoundKeys(key64bit):
 ```
 FUNCTION decrypt(ciphertext, key):
     // Same as encryption but with round keys in reverse order
-    roundKeys = generateRoundKeys(key)
+    roundKeys = buildKeySchedule(key)
     reverseRoundKeys = reverse(roundKeys)
     
     // Apply same process with reversed keys
@@ -427,73 +427,190 @@ FUNCTION decrypt(ciphertext, key):
 
 ## 7. Frequency Analysis (Cryptanalysis)
 
-### Analysis
+### Main Analysis Function
 ```
-FUNCTION analyzeFrequency(ciphertext):
-    // Count letter frequencies
-    letterCounts = array of 26 zeros
-    totalLetters = 0
+FUNCTION analyze(ciphertext):
+    // Convert to uppercase
+    ciphertext = toUpperCase(ciphertext)
     
-    FOR each character c in ciphertext:
+    // Count letter frequencies
+    letterCounts = countLetters(ciphertext)
+    percentages = calculatePercentages(letterCounts)
+    
+    // Display frequency table
+    DISPLAY "--- Frequency Analysis ---"
+    DISPLAY "Ciphertext: " + ciphertext
+    DISPLAY "Letter Frequency Count:"
+    DISPLAY frequency table with counts, percentages, and expected percentages
+    
+    // Find most frequent letters
+    DISPLAY "Most frequent letters in ciphertext:"
+    findMostFrequent(percentages, 5)
+    
+    // Suggest possible substitutions
+    DISPLAY "Possible monoalphabetic substitutions:"
+    suggestSubstitutions(percentages)
+    
+    // Automatically detect key and decrypt
+    DISPLAY "--- Auto-Decryption (Monoalphabetic Cipher Only) ---"
+    detectedKey = detectKey(percentages)
+    
+    IF detectedKey != null:
+        plaintext = decryptWithKey(ciphertext, detectedKey)
+        DISPLAY "Detected Key (Shift): " + detectedKey
+        DISPLAY "Decrypted Plaintext: " + plaintext
+        // Note: Results are displayed, method does not return a value
+    ELSE:
+        DISPLAY "Could not automatically detect the key."
+        DISPLAY "The ciphertext may not be monoalphabetic, or sample size is too small."
+        // Note: Method does not return a value when key cannot be detected
+```
+
+### Count Letters
+```
+FUNCTION countLetters(text):
+    letterCounts = array of 26 zeros
+    text = toUpperCase(text)
+    
+    FOR each character c in text:
         IF c is a letter:
             index = getAlphabetPosition(c)
-            letterCounts[index] = letterCounts[index] + 1
-            totalLetters = totalLetters + 1
+            IF index >= 0 AND index < 26:
+                letterCounts[index] = letterCounts[index] + 1
     
-    // Calculate percentages
+    RETURN letterCounts
+```
+
+### Calculate Percentages
+```
+FUNCTION calculatePercentages(counts):
+    total = 0
+    FOR each count in counts:
+        total += count
+    
     percentages = array of 26
+    
+    IF total == 0:
+        RETURN array of 26 zeros
+    
     FOR i = 0 to 25:
-        percentages[i] = (letterCounts[i] / totalLetters) * 100
+        percentages[i] = (counts[i] * 100.0) / total
     
     RETURN percentages
 ```
 
-### Caesar Shift Detection
+### Key Detection (with Correlation Analysis)
 ```
-FUNCTION detectCaesarShift(ciphertext):
-    cipherFrequencies = analyzeFrequency(ciphertext)
-    
-    // English letter frequencies (known)
-    englishFrequencies = [8.167, 1.492, 2.782, ...] // A-Z
+FUNCTION detectKey(percentages):
+    // English letter frequencies (known percentages)
+    englishFrequencies = [8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 
+                          6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 
+                          7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 
+                          0.978, 2.360, 0.150, 1.974, 0.074]  // A-Z
     
     bestShift = 0
-    bestCorrelation = -infinity
+    maxCorrelation = -1.0
     
     // Try all 26 possible shifts
     FOR shift = 0 to 25:
-        // Calculate correlation with English
-        correlation = 0
-        FOR i = 0 to 25:
-            shiftedIndex = (i + shift) MOD 26
-            correlation += cipherFrequencies[i] * englishFrequencies[shiftedIndex]
+        // Calculate Pearson correlation coefficient
+        correlation = calculateCorrelation(percentages, shift)
         
-        IF correlation > bestCorrelation:
-            bestCorrelation = correlation
+        IF correlation > maxCorrelation:
+            maxCorrelation = correlation
             bestShift = shift
     
-    RETURN bestShift
+    // Return shift only if correlation is above threshold (0.3)
+    IF maxCorrelation > 0.3:
+        RETURN bestShift
+    ELSE:
+        RETURN null
+```
+
+### Calculate Correlation (Pearson Correlation)
+```
+FUNCTION calculateCorrelation(cipherPercentages, shift):
+    sumProduct = 0.0
+    sumCipherSq = 0.0
+    sumEnglishSq = 0.0
+    
+    FOR i = 0 to 25:
+        // Calculate what plaintext letter this cipher letter represents
+        // If cipher letter at index i, and shift is s, 
+        // then plaintext is at (i - s + 26) MOD 26
+        plainIndex = (i - shift + 26) MOD 26
+        
+        cipherFreq = cipherPercentages[i]
+        englishFreq = ENGLISH_FREQUENCY[plainIndex]
+        
+        // Pearson correlation coefficient components
+        sumProduct += cipherFreq * englishFreq
+        sumCipherSq += cipherFreq * cipherFreq
+        sumEnglishSq += englishFreq * englishFreq
+    
+    // Avoid division by zero
+    IF sumCipherSq == 0.0 OR sumEnglishSq == 0.0:
+        RETURN 0.0
+    
+    // Return Pearson correlation coefficient
+    RETURN sumProduct / SQRT(sumCipherSq * sumEnglishSq)
+```
+
+### Auto-Decryption
+```
+FUNCTION decryptWithKey(ciphertext, detectedKey):
+    // Decrypt ciphertext using detected shift key
+    plaintext = ""
+    
+    FOR each character c in ciphertext:
+        IF c is a letter:
+            index = getAlphabetPosition(c)
+            decryptedIndex = (index - detectedKey + 26) MOD 26
+            plaintext += ALPHABET[decryptedIndex]
+        ELSE:
+            plaintext += c  // Keep non-letters as-is
+    
+    RETURN plaintext
+```
+
+### Find Most Frequent Letters
+```
+FUNCTION findMostFrequent(percentages, topN):
+    sorted = array of IndexValue pairs (index, percentage)
+    
+    FOR i = 0 to 25:
+        sorted[i] = (i, percentages[i])
+    
+    // Sort by frequency (descending)
+    SORT sorted by percentage DESCENDING
+    
+    FOR i = 0 to min(topN, 26) - 1:
+        IF sorted[i].percentage > 0:
+            DISPLAY (i+1) + ". " + ALPHABET[sorted[i].index] + " (" + 
+                    sorted[i].percentage + "%)"
 ```
 
 ### Substitution Suggestions
 ```
-FUNCTION suggestSubstitutions(ciphertext):
-    cipherFrequencies = analyzeFrequency(ciphertext)
+FUNCTION suggestSubstitutions(percentages):
+    // Get top 5 most frequent in ciphertext
+    cipherSorted = array of IndexValue pairs
+    FOR i = 0 to 25:
+        cipherSorted[i] = (i, percentages[i])
+    SORT cipherSorted by percentage DESCENDING
     
-    // Sort cipher letters by frequency (descending)
-    sortedCipher = sortByFrequency(cipherFrequencies)
+    // Get top 5 most frequent in English
+    englishSorted = array of IndexValue pairs
+    FOR i = 0 to 25:
+        englishSorted[i] = (i, ENGLISH_FREQUENCY[i])
+    SORT englishSorted by frequency DESCENDING
     
-    // Most common English letters
-    commonEnglish = ['E', 'T', 'A', 'O', 'I', 'N', 'S', 'H', 'R', 'D']
-    
-    suggestions = []
-    
-    // Map most frequent cipher letters to common English letters
-    FOR i = 0 to 9:
-        cipherLetter = sortedCipher[i]
-        englishLetter = commonEnglish[i]
-        suggestions.ADD(cipherLetter + " → " + englishLetter)
-    
-    RETURN suggestions
+    DISPLAY "Cipher -> English (most likely matches):"
+    FOR i = 0 to 4:
+        IF cipherSorted[i].percentage > 0:
+            cipherLetter = ALPHABET[cipherSorted[i].index]
+            englishLetter = ALPHABET[englishSorted[i].index]
+            DISPLAY cipherLetter + " -> " + englishLetter
 ```
 
 ---
@@ -501,6 +618,7 @@ FUNCTION suggestSubstitutions(ciphertext):
 ## Common Helper Functions
 
 ### Alphabet Position
+**Used by:** Monoalphabetic Cipher, Vigenere Cipher
 ```
 FUNCTION getAlphabetPosition(character):
     // Returns 0-25 for A-Z (case insensitive)
@@ -510,6 +628,7 @@ FUNCTION getAlphabetPosition(character):
 ```
 
 ### Permutation
+**Used by:** DES Cipher
 ```
 FUNCTION permute(input, permutationTable):
     output = ""
@@ -519,6 +638,7 @@ FUNCTION permute(input, permutationTable):
 ```
 
 ### XOR Operation
+**Used by:** DES Cipher
 ```
 FUNCTION XOR(binary1, binary2):
     result = ""

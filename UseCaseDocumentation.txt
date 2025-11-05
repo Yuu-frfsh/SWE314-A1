@@ -1,0 +1,2156 @@
+================================================================================
+                    EDUCATIONAL ENCRYPTION TOOL
+                    USE CASE DOCUMENTATION
+================================================================================
+
+This document provides a comprehensive overview of all use cases in the system,
+including their descriptions, actors, relationships, and flow descriptions.
+
+================================================================================
+                              ACTORS
+================================================================================
+
+Primary Actor:
+  - User: The individual using the Educational Encryption Tool to learn about
+         cryptography. The user interacts with the system through the console
+         interface to perform encryption, decryption, and cryptanalysis operations.
+
+================================================================================
+                         USE CASE CATEGORIES
+================================================================================
+
+1. System Navigation Use Cases (UC9, UC10, UC21, UC22)
+2. Encryption Use Cases (UC1-UC6)
+3. Decryption Use Cases (UC7)
+4. Cryptanalysis Use Cases (UC8)
+5. Supporting/Utility Use Cases (UC11-UC20)
+
+================================================================================
+                      SYSTEM NAVIGATION USE CASES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC9: Exit System                                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user exits the Educational Encryption Tool and returns to the command line.
+
+Preconditions:
+  - The system is running and displaying the main menu.
+
+Main Flow:
+  1. User selects option "0" from the main menu
+  2. System displays farewell message
+  3. System closes scanner resources
+  4. System terminates
+
+Postconditions:
+  - All system resources are released
+  - User returns to command line
+
+Related Use Cases:
+  - Uses: UC10 (Display Main Menu)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC10: Display Main Menu                                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system displays the main menu with all available options to the user.
+
+Preconditions:
+  - System is initialized
+  - Welcome message has been displayed
+
+Main Flow:
+  1. System displays menu header
+  2. System lists encryption options (1-6)
+  3. System lists decryption option (7)
+  4. System lists cryptanalysis option (8)
+  5. System lists exit option (0)
+  6. System prompts for user choice
+
+Postconditions:
+  - Menu is displayed
+  - System is ready to accept user input
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7, UC8, UC9
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC21: Display Welcome Message                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system displays a welcome message when the application starts.
+
+Preconditions:
+  - Application has been launched
+
+Main Flow:
+  1. System displays application header
+  2. System displays course information
+  3. System displays welcome message
+  4. System displays brief description of tool capabilities
+
+Postconditions:
+  - Welcome message is displayed
+  - System is ready to display main menu
+
+Related Use Cases:
+  - Included by: System initialization
+  - Uses: UC10 (Display Main Menu)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC22: Handle Invalid Input                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Extended)
+
+Brief Description:
+  The system handles invalid user input and provides error feedback.
+
+Preconditions:
+  - User has provided input
+  - Input is invalid (wrong format, out of range, etc.)
+
+Main Flow:
+  1. System detects invalid input
+  2. System displays appropriate error message
+  3. System returns to previous state (menu or prompt)
+  4. User can retry with correct input
+
+Postconditions:
+  - Error message is displayed
+  - System is ready for corrected input
+
+Related Use Cases:
+  - Extends: UC11 (Validate User Input)
+  - Used by: All use cases requiring user input
+
+================================================================================
+                        ENCRYPTION USE CASES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC1: Encrypt with Monoalphabetic Cipher                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using the Monoalphabetic Substitution Cipher
+  (Caesar Cipher) with a shift key, and views step-by-step encryption process.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "1" (Monoalphabetic Substitution)
+  2. System includes UC13 (Get Plaintext Input)
+  3. System includes UC15 (Get Key Input) - expects integer shift value
+  4. System includes UC11 (Validate User Input)
+  5. System includes UC12 (Display Step-by-Step Process)
+  6. System performs Monoalphabetic encryption
+  7. System includes UC16 (Display Encryption Result)
+  8. System returns to main menu
+
+Alternative Flows:
+  2a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 2
+  3a. If key is invalid (not an integer):
+      - System displays error message
+      - Returns to step 3
+
+Postconditions:
+  - Plaintext has been encrypted
+  - Ciphertext is displayed
+  - Step-by-step process has been shown
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16
+  - Uses: MonoalphabeticCipher class
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC2: Encrypt with Vigenere Cipher                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using the Vigenere Cipher with a keyword,
+  and views step-by-step encryption process.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "2" (Vigenere Cipher)
+  2. System includes UC13 (Get Plaintext Input)
+  3. System includes UC15 (Get Key Input) - expects keyword string
+  4. System includes UC11 (Validate User Input)
+  5. System includes UC12 (Display Step-by-Step Process)
+  6. System performs Vigenere encryption
+  7. System includes UC16 (Display Encryption Result)
+  8. System returns to main menu
+
+Alternative Flows:
+  2a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 2
+  3a. If key is empty:
+      - System displays error message
+      - Returns to step 3
+
+Postconditions:
+  - Plaintext has been encrypted
+  - Ciphertext is displayed
+  - Step-by-step process has been shown
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16
+  - Uses: VigenereCipher class
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC3: Encrypt with Playfair Cipher                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using the Playfair Cipher with a keyword,
+  and views step-by-step encryption process including 5x5 matrix generation.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "3" (Playfair Cipher)
+  2. System includes UC13 (Get Plaintext Input)
+  3. System includes UC15 (Get Key Input) - expects keyword string
+  4. System includes UC11 (Validate User Input) - checks alphabetic only
+  5. System builds 5x5 key matrix from keyword
+  6. System prepares plaintext into digraphs
+  7. System includes UC12 (Display Step-by-Step Process) - shows matrix and digraphs
+  8. System performs Playfair encryption
+  9. System includes UC16 (Display Encryption Result)
+  10. System returns to main menu
+
+Alternative Flows:
+  2a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 2
+  3a. If key is empty or contains non-alphabetic characters:
+      - System displays error message
+      - Returns to step 3
+
+Postconditions:
+  - Plaintext has been encrypted
+  - Ciphertext is displayed
+  - Step-by-step process has been shown (including matrix)
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16
+  - Uses: PlayfairCipher class
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC4: Encrypt with Keyed Transposition Cipher                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using the Keyed Transposition Cipher with
+  a 2x5 permutation matrix key, and views step-by-step encryption process.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "4" (Keyed Transposition)
+  2. System includes UC13 (Get Plaintext Input)
+  3. System prompts for first row of key (plaintext indices)
+  4. System prompts for second row of key (ciphertext positions)
+  5. System includes UC11 (Validate User Input) - validates 5 values per row
+  6. System includes UC12 (Display Step-by-Step Process) - shows 2x5 matrix
+  7. System pads plaintext to multiple of 5 if needed
+  8. System performs Keyed Transposition encryption
+  9. System includes UC16 (Display Encryption Result)
+  10. System returns to main menu
+
+Alternative Flows:
+  2a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 2
+  4a. If key format is invalid (not 5 values per row):
+      - System displays error message
+      - Returns to step 3
+
+Postconditions:
+  - Plaintext has been encrypted
+  - Ciphertext is displayed
+  - Step-by-step process has been shown
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16
+  - Uses: KeyedTranspositionCipher class
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC5: Encrypt with Combined Cipher                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using a combination of Monoalphabetic Cipher
+  and another cipher (Vigenere, Playfair, or Keyed Transposition), viewing
+  step-by-step process for both algorithms.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "5" (Combined Encryption)
+  2. System includes UC20 (Choose Second Algorithm)
+  3. System includes UC13 (Get Plaintext Input)
+  4. System includes UC15 (Get Key Input) - gets Monoalphabetic shift key
+  5. System includes UC11 (Validate User Input) - validates integer shift
+  6. System includes UC15 (Get Key Input) - gets second algorithm key
+     (format depends on selected algorithm)
+  7. System includes UC11 (Validate User Input) - validates second key
+  8. System includes UC12 (Display Step-by-Step Process) - shows both algorithms
+  9. System performs Monoalphabetic encryption first
+  10. System performs second algorithm encryption on intermediate result
+  11. System includes UC16 (Display Encryption Result)
+  12. System returns to main menu
+
+Alternative Flows:
+  2a. If user cancels algorithm selection:
+      - Use case terminates
+      - Returns to main menu
+  3a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 3
+  5a. If Monoalphabetic key is invalid:
+      - System displays error message
+      - Returns to step 4
+  6a. If second algorithm key is invalid:
+      - System displays error message
+      - Returns to step 6
+
+Postconditions:
+  - Plaintext has been encrypted with combined ciphers
+  - Ciphertext is displayed
+  - Step-by-step process has been shown for both algorithms
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16, UC20
+  - Uses: CombinedCipher, MonoalphabeticCipher, and selected second cipher class
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC6: Encrypt with DES Cipher                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user encrypts plaintext using the simplified DES (Data Encryption Standard)
+  cipher with a key, viewing detailed step-by-step encryption process.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+
+Main Flow:
+  1. User selects option "6" (DES simplified)
+  2. System includes UC13 (Get Plaintext Input)
+  3. System includes UC15 (Get Key Input) - expects key string (first 8 chars used)
+  4. System includes UC11 (Validate User Input)
+  5. System converts plaintext to binary
+  6. System builds DES key schedule
+  7. System includes UC12 (Display Step-by-Step Process) - shows DES operations
+  8. System performs DES encryption (block by block)
+  9. System converts result to hexadecimal
+  10. System includes UC16 (Display Encryption Result) - displays hex ciphertext
+  11. System returns to main menu
+
+Alternative Flows:
+  2a. If plaintext is empty:
+      - System displays error message
+      - Returns to step 2
+  3a. If key is empty:
+      - System displays error message
+      - Returns to step 3
+
+Postconditions:
+  - Plaintext has been encrypted using DES
+  - Hexadecimal ciphertext is displayed
+  - Step-by-step process has been shown
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC13, UC15, UC16
+  - Uses: DESCipher class
+
+================================================================================
+                        DECRYPTION USE CASES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC7: Decrypt Text                                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user decrypts ciphertext by selecting an encryption algorithm and providing
+  the appropriate key, viewing step-by-step decryption process.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+  - User has ciphertext to decrypt
+
+Main Flow:
+  1. User selects option "7" (Decrypt Text)
+  2. System includes UC19 (Select Decryption Algorithm)
+  3. System includes UC14 (Get Ciphertext Input)
+  4. System determines key format based on selected algorithm
+  5. System includes UC15 (Get Key Input) - format depends on algorithm
+     (for Keyed Transposition: prompts for 2-line key)
+  6. System includes UC11 (Validate User Input)
+  7. System includes UC12 (Display Step-by-Step Process) - shows decryption steps
+  8. System performs decryption using selected algorithm
+  9. System includes UC17 (Display Decryption Result)
+  10. System returns to main menu
+
+Alternative Flows:
+  2a. If user selects invalid algorithm:
+      - System displays error message
+      - Use case terminates
+      - Returns to main menu
+  3a. If ciphertext is empty:
+      - System displays error message
+      - Returns to step 3
+  5a. If key is invalid or empty:
+      - System displays error message
+      - Returns to step 5
+
+Special Cases:
+  - For Keyed Transposition (option 4): Key input requires two separate lines
+  - For DES (option 5): Ciphertext input is in hexadecimal format
+
+Postconditions:
+  - Ciphertext has been decrypted
+  - Plaintext is displayed
+  - Step-by-step process has been shown
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC12, UC14, UC15, UC17, UC19
+  - Uses: MonoalphabeticCipher, VigenereCipher, PlayfairCipher,
+          KeyedTranspositionCipher, or DESCipher class (depending on selection)
+
+================================================================================
+                      CRYPTANALYSIS USE CASES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC8: Perform Frequency Analysis                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Primary Use Case
+
+Brief Description:
+  The user performs frequency analysis on ciphertext to break monoalphabetic
+  substitution ciphers. The system automatically detects the key and decrypts
+  the ciphertext.
+
+Preconditions:
+  - System is running
+  - User is at the main menu
+  - User has ciphertext to analyze
+
+Main Flow:
+  1. User selects option "8" (Frequency Analysis)
+  2. System includes UC14 (Get Ciphertext Input)
+  3. System includes UC11 (Validate User Input)
+  4. System counts letter frequencies in ciphertext
+  5. System calculates percentage frequencies
+  6. System displays frequency table (letter, count, percentage, expected %)
+  7. System identifies most frequent letters
+  8. System suggests possible letter substitutions
+  9. System automatically detects encryption key using correlation analysis
+  10. System automatically decrypts ciphertext using detected key
+  11. System displays detected key and decrypted plaintext
+  12. System returns to main menu
+
+Alternative Flows:
+  2a. If ciphertext is empty:
+      - System displays error message
+      - Returns to step 2
+  9a. If key cannot be detected (low correlation, wrong cipher type, etc.):
+      - System displays message indicating detection failure
+      - Continues to step 12
+
+Postconditions:
+  - Frequency analysis has been performed
+  - Letter frequencies have been displayed
+  - Key has been detected (if possible)
+  - Plaintext has been decrypted and displayed (if key detected)
+  - User is returned to main menu
+
+Related Use Cases:
+  - Includes: UC10, UC11, UC14
+  - Uses: FrequencyAnalysis class
+  - Uses: MonoalphabeticCipher class (for auto-decryption)
+
+================================================================================
+                    SUPPORTING/UTILITY USE CASES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC11: Validate User Input                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: System
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system validates user input to ensure it meets required format and content
+  criteria before processing.
+
+Preconditions:
+  - User has provided input
+  - Validation criteria are known
+
+Main Flow:
+  1. System checks if input is not empty (if required)
+  2. System checks input format (alphabetic, numeric, specific length, etc.)
+  3. System checks input content (key format, valid values, etc.)
+  4. If valid, input is accepted
+  5. If invalid, error message is displayed
+
+Alternative Flows:
+  1a. If input is empty when required:
+      - System displays "cannot be empty" error
+      - Returns to input prompt
+  2a. If input format is incorrect:
+      - System displays format-specific error message
+      - Returns to input prompt
+  3a. If input content is invalid:
+      - System displays content-specific error message
+      - Returns to input prompt
+
+Postconditions:
+  - Input has been validated
+  - Either input is accepted or error is displayed
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7, UC8
+  - Extended by: UC22 (Handle Invalid Input)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC12: Display Step-by-Step Process                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: System
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system displays a detailed, educational step-by-step explanation of the
+  encryption or decryption process being performed.
+
+Preconditions:
+  - Algorithm has been selected
+  - Input text and key have been provided
+
+Main Flow:
+  1. System displays algorithm name and description
+  2. System displays input text
+  3. System displays key information
+  4. For each step in the algorithm:
+     a. System shows current state
+     b. System shows transformation being applied
+     c. System shows intermediate result
+  5. System displays final result explanation
+
+Algorithm-Specific Displays:
+  - Monoalphabetic: Character mappings and shift values
+  - Vigenere: Key alignment and shift calculations
+  - Playfair: 5x5 matrix, digraph preparation, encryption rules
+  - Keyed Transposition: 2x5 matrix and block transformations
+  - DES: Binary operations, key schedule, S-box applications
+  - Combined: Steps for both algorithms sequentially
+
+Postconditions:
+  - Step-by-step process has been displayed
+  - User understands how the algorithm works
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7
+  - Extended by: UC24 (Display Detailed Steps) - for more verbose output
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC13: Get Plaintext Input                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system prompts the user to enter plaintext for encryption operations.
+
+Preconditions:
+  - Encryption operation has been initiated
+
+Main Flow:
+  1. System displays prompt: "Enter plaintext: "
+  2. User enters plaintext
+  3. System captures user input
+  4. System includes UC11 (Validate User Input)
+
+Postconditions:
+  - Plaintext has been obtained
+  - Plaintext is ready for processing
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6
+  - Uses: UC11 (Validate User Input)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC14: Get Ciphertext Input                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system prompts the user to enter ciphertext for decryption or analysis
+  operations.
+
+Preconditions:
+  - Decryption or cryptanalysis operation has been initiated
+
+Main Flow:
+  1. System displays prompt: "Enter ciphertext: "
+  2. User enters ciphertext
+  3. System captures user input
+  4. System includes UC11 (Validate User Input)
+
+Special Cases:
+  - For DES decryption: Ciphertext is expected in hexadecimal format
+
+Postconditions:
+  - Ciphertext has been obtained
+  - Ciphertext is ready for processing
+
+Related Use Cases:
+  - Included by: UC7, UC8
+  - Uses: UC11 (Validate User Input)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC15: Get Key Input                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system prompts the user to enter an encryption or decryption key.
+  The format depends on the selected algorithm.
+
+Preconditions:
+  - Encryption or decryption operation has been initiated
+  - Algorithm is known
+
+Main Flow:
+  1. System determines required key format based on algorithm
+  2. System displays appropriate prompt:
+     - Monoalphabetic: "Enter shift key (integer, e.g., 3 or -5): "
+     - Vigenere: "Enter keyword: "
+     - Playfair: "Enter keyword: "
+     - Keyed Transposition: Prompts for two lines separately
+     - DES: "Enter key: " (uses first 8 characters)
+  3. User enters key
+  4. System captures user input
+  5. System includes UC11 (Validate User Input) - format-specific validation
+
+Postconditions:
+  - Key has been obtained
+  - Key format matches algorithm requirements
+  - Key is ready for processing
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7
+  - Uses: UC11 (Validate User Input)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC16: Display Encryption Result                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: System
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system displays the final encrypted ciphertext result to the user.
+
+Preconditions:
+  - Encryption has been completed
+  - Ciphertext has been generated
+
+Main Flow:
+  1. System displays result header: "--- Result ---" or "--- Final Result ---"
+  2. System displays label: "Ciphertext: " or "Ciphertext (hex): "
+  3. System displays the encrypted ciphertext
+  4. System formats output appropriately (uppercase, hex format for DES, etc.)
+
+Postconditions:
+  - Encryption result has been displayed
+  - User can see the ciphertext
+
+Related Use Cases:
+  - Included by: UC1, UC2, UC3, UC4, UC5, UC6
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC17: Display Decryption Result                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: System
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The system displays the final decrypted plaintext result to the user.
+
+Preconditions:
+  - Decryption has been completed
+  - Plaintext has been recovered
+
+Main Flow:
+  1. System displays result header: "--- Result ---"
+  2. System displays label: "Plaintext: "
+  3. System displays the decrypted plaintext
+  4. System formats output appropriately
+
+Postconditions:
+  - Decryption result has been displayed
+  - User can see the plaintext
+
+Related Use Cases:
+  - Included by: UC7
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC18: Select Encryption Algorithm                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The user selects which encryption algorithm to use from the main menu.
+
+Preconditions:
+  - System is running
+  - Main menu is displayed
+
+Main Flow:
+  1. System displays encryption options:
+     - Option 1: Monoalphabetic Substitution
+     - Option 2: Vigenere Cipher
+     - Option 3: Playfair Cipher
+     - Option 4: Keyed Transposition
+     - Option 5: Combined Encryption
+     - Option 6: DES (simplified)
+  2. User selects option number
+  3. System validates selection
+  4. System initiates corresponding encryption use case
+
+Alternative Flows:
+  2a. If user enters invalid option:
+      - System displays "Invalid choice" message
+      - Returns to main menu
+
+Postconditions:
+  - Encryption algorithm has been selected
+  - Corresponding encryption use case is initiated
+
+Related Use Cases:
+  - Included by: UC10 (Display Main Menu)
+  - Initiates: UC1, UC2, UC3, UC4, UC5, or UC6
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC19: Select Decryption Algorithm                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The user selects which decryption algorithm to use when decrypting text.
+
+Preconditions:
+  - User has selected "Decrypt Text" from main menu
+
+Main Flow:
+  1. System displays decryption algorithm options:
+     - Option 1: Monoalphabetic Substitution
+     - Option 2: Vigenere Cipher
+     - Option 3: Playfair Cipher
+     - Option 4: Keyed Transposition
+     - Option 5: DES (simplified)
+  2. User selects option number
+  3. System validates selection
+  4. System uses selection to determine key format requirements
+
+Alternative Flows:
+  2a. If user enters invalid option:
+      - System displays "Invalid choice" message
+      - Use case terminates
+      - Returns to main menu
+
+Postconditions:
+  - Decryption algorithm has been selected
+  - System knows which key format to expect
+
+Related Use Cases:
+  - Included by: UC7
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ UC20: Choose Second Algorithm                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actor: User
+Type: Supporting Use Case (Included)
+
+Brief Description:
+  The user selects the second algorithm to combine with Monoalphabetic Cipher
+  when using Combined Encryption.
+
+Preconditions:
+  - User has selected "Combined Encryption" from main menu
+
+Main Flow:
+  1. System displays second algorithm options:
+     - Option 1: Vigenere
+     - Option 2: Playfair
+     - Option 3: Keyed Transposition
+  2. User selects option number
+  3. System validates selection
+  4. System initializes corresponding cipher algorithm
+  5. System stores algorithm name for display
+
+Alternative Flows:
+  2a. If user enters invalid option:
+      - System displays "Invalid choice" message
+      - Algorithm selection is set to null
+      - Use case terminates (parent use case UC5 returns to menu)
+
+Postconditions:
+  - Second algorithm has been selected (or selection failed)
+  - CombinedCipher instance is configured with selected algorithm
+
+Related Use Cases:
+  - Included by: UC5 (Encrypt with Combined Cipher)
+
+================================================================================
+                      USE CASE RELATIONSHIPS
+================================================================================
+
+INCLUDES RELATIONSHIPS (<<includes>>):
+  Mandatory inclusion - included use case must execute
+
+  UC1 includes: UC10, UC11, UC12, UC13, UC15, UC16
+  UC2 includes: UC10, UC11, UC12, UC13, UC15, UC16
+  UC3 includes: UC10, UC11, UC12, UC13, UC15, UC16
+  UC4 includes: UC10, UC11, UC12, UC13, UC15, UC16
+  UC5 includes: UC10, UC11, UC12, UC13, UC15, UC16, UC20
+  UC6 includes: UC10, UC11, UC12, UC13, UC15, UC16
+  UC7 includes: UC10, UC11, UC12, UC14, UC15, UC17, UC19
+  UC8 includes: UC10, UC11, UC14
+  UC9 includes: UC10
+  
+  UC10 included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7, UC8, UC9
+  UC11 included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7, UC8
+  UC12 included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7
+  UC13 included by: UC1, UC2, UC3, UC4, UC5, UC6
+  UC14 included by: UC7, UC8
+  UC15 included by: UC1, UC2, UC3, UC4, UC5, UC6, UC7
+  UC16 included by: UC1, UC2, UC3, UC4, UC5, UC6
+  UC17 included by: UC7
+  UC19 included by: UC7
+  UC20 included by: UC5
+
+EXTENDS RELATIONSHIPS (<<extends>>):
+  Optional extension - extending use case may execute conditionally
+
+  UC22 extends: UC11 (Handle Invalid Input extends Validate User Input)
+     - Extension point: When validation fails
+     - Condition: Input validation detects an error
+
+GENERALIZATION RELATIONSHIPS:
+  Abstract base use case and specialized variants
+
+  Base Use Case: "Process Cipher Operation"
+    Specialized by: UC1, UC2, UC3, UC4, UC5, UC6, UC7
+    - All share common flow: get input, validate, process, display result
+
+  Base Use Case: "Get Text Input"
+    Specialized by: UC13 (Get Plaintext Input), UC14 (Get Ciphertext Input)
+    - Both get text input but with different prompts and contexts
+
+DEPENDENCY RELATIONSHIPS:
+  Use cases that depend on or use other use cases
+
+  UC5 depends on: UC1 (uses Monoalphabetic as first step)
+  UC8 depends on: UC1 (uses Monoalphabetic for auto-decryption)
+  UC12 depends on: algorithm-specific display logic
+  UC15 depends on: algorithm selection to determine key format
+
+================================================================================
+                      USE CASE DIAGRAM STRUCTURE
+================================================================================
+
+Primary Use Cases (Top Level):
+  ┌─────────────────────────────────────────────┐
+  │                  User                        │
+  └─────────────────────────────────────────────┘
+           │
+           ├── UC1: Encrypt with Monoalphabetic
+           ├── UC2: Encrypt with Vigenere
+           ├── UC3: Encrypt with Playfair
+           ├── UC4: Encrypt with Keyed Transposition
+           ├── UC5: Encrypt with Combined Cipher
+           ├── UC6: Encrypt with DES
+           ├── UC7: Decrypt Text
+           ├── UC8: Perform Frequency Analysis
+           └── UC9: Exit System
+
+Supporting Use Cases (Included):
+  UC1 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16
+  UC2 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16
+  UC3 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16
+  UC4 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16
+  UC5 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16, UC20
+  UC6 ──includes──> UC10, UC11, UC12, UC13, UC15, UC16
+  UC7 ──includes──> UC10, UC11, UC12, UC14, UC15, UC17, UC19
+  UC8 ──includes──> UC10, UC11, UC14
+
+Extended Use Cases:
+  UC11 ──extends──> UC22 (when validation fails)
+
+Specialization:
+  Process Cipher Operation ──generalizes──> UC1, UC2, UC3, UC4, UC5, UC6, UC7
+  Get Text Input ──generalizes──> UC13, UC14
+
+================================================================================
+                      USE CASE SUMMARY TABLE
+================================================================================
+
+| UC ID | Use Case Name                      | Type       | Actor | Priority |
+|-------|------------------------------------|------------|-------|----------|
+| UC1   | Encrypt with Monoalphabetic       | Primary    | User  | High     |
+| UC2   | Encrypt with Vigenere             | Primary    | User  | High     |
+| UC3   | Encrypt with Playfair             | Primary    | User  | High     |
+| UC4   | Encrypt with Keyed Transposition  | Primary    | User  | High     |
+| UC5   | Encrypt with Combined Cipher       | Primary    | User  | Medium   |
+| UC6   | Encrypt with DES                  | Primary    | User  | Medium   |
+| UC7   | Decrypt Text                      | Primary    | User  | High     |
+| UC8   | Perform Frequency Analysis        | Primary    | User  | Medium   |
+| UC9   | Exit System                       | Primary    | User  | Low      |
+| UC10  | Display Main Menu                 | Supporting | User  | High     |
+| UC11  | Validate User Input               | Supporting | System| High     |
+| UC12  | Display Step-by-Step Process      | Supporting | System| High     |
+| UC13  | Get Plaintext Input               | Supporting | User  | High     |
+| UC14  | Get Ciphertext Input              | Supporting | User  | High     |
+| UC15  | Get Key Input                     | Supporting | User  | High     |
+| UC16  | Display Encryption Result         | Supporting | System| High     |
+| UC17  | Display Decryption Result         | Supporting | System| High     |
+| UC18  | Select Encryption Algorithm        | Supporting | User  | High     |
+| UC19  | Select Decryption Algorithm       | Supporting | User  | High     |
+| UC20  | Choose Second Algorithm           | Supporting | User  | Medium    |
+| UC21  | Display Welcome Message           | Supporting | User  | Low      |
+| UC22  | Handle Invalid Input              | Supporting | System| Medium   |
+
+Total Use Cases: 22
+  - Primary Use Cases: 9
+  - Supporting Use Cases: 13
+
+================================================================================
+                        PLANTUML USE CASE DIAGRAMS
+================================================================================
+
+The following PlantUML code can be used to generate use case diagrams for this system.
+Copy the code below and paste it into a PlantUML editor or render it online at http://www.plantuml.com/plantuml/
+
+================================================================================
+                        MAIN USE CASE DIAGRAM
+================================================================================
+
+@startuml
+!define PRIMARY_COLOR #LightBlue
+!define SUPPORTING_COLOR #LightGreen
+!define EXTEND_COLOR #LightYellow
+
+skinparam usecase {
+    BackgroundColor<<Primary>> PRIMARY_COLOR
+    BackgroundColor<<Supporting>> SUPPORTING_COLOR
+    BackgroundColor<<Extend>> EXTEND_COLOR
+    BorderColor Black
+    ArrowColor Black
+}
+
+left to right direction
+
+actor User as user
+
+' Primary Use Cases
+rectangle "Encryption Use Cases" {
+    (UC1: Encrypt with\nMonoalphabetic) <<Primary>>
+    (UC2: Encrypt with\nVigenere) <<Primary>>
+    (UC3: Encrypt with\nPlayfair) <<Primary>>
+    (UC4: Encrypt with\nKeyed Transposition) <<Primary>>
+    (UC5: Encrypt with\nCombined Cipher) <<Primary>>
+    (UC6: Encrypt with\nDES) <<Primary>>
+}
+
+rectangle "Other Operations" {
+    (UC7: Decrypt Text) <<Primary>>
+    (UC8: Perform Frequency\nAnalysis) <<Primary>>
+    (UC9: Exit System) <<Primary>>
+}
+
+' Supporting Use Cases - Input/Output
+rectangle "Input/Output Use Cases" {
+    (UC10: Display\nMain Menu) <<Supporting>>
+    (UC11: Validate\nUser Input) <<Supporting>>
+    (UC12: Display Step-by-Step\nProcess) <<Supporting>>
+    (UC13: Get Plaintext\nInput) <<Supporting>>
+    (UC14: Get Ciphertext\nInput) <<Supporting>>
+    (UC15: Get Key Input) <<Supporting>>
+    (UC16: Display Encryption\nResult) <<Supporting>>
+    (UC17: Display Decryption\nResult) <<Supporting>>
+}
+
+' Supporting Use Cases - Selection & Navigation
+rectangle "Selection & Navigation Use Cases" {
+    (UC18: Select Encryption\nAlgorithm) <<Supporting>>
+    (UC19: Select Decryption\nAlgorithm) <<Supporting>>
+    (UC20: Choose Second\nAlgorithm) <<Supporting>>
+    (UC21: Display Welcome\nMessage) <<Supporting>>
+    (UC22: Handle Invalid\nInput) <<Extend>>
+}
+
+' User to Primary Use Cases
+user --> (UC1: Encrypt with\nMonoalphabetic)
+user --> (UC2: Encrypt with\nVigenere)
+user --> (UC3: Encrypt with\nPlayfair)
+user --> (UC4: Encrypt with\nKeyed Transposition)
+user --> (UC5: Encrypt with\nCombined Cipher)
+user --> (UC6: Encrypt with\nDES)
+user --> (UC7: Decrypt Text)
+user --> (UC8: Perform Frequency\nAnalysis)
+user --> (UC9: Exit System)
+
+' Includes relationships - Encryption use cases
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC15: Get Key Input) : <<includes>>
+(UC1: Encrypt with\nMonoalphabetic) ..> (UC16: Display Encryption\nResult) : <<includes>>
+
+(UC2: Encrypt with\nVigenere) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC2: Encrypt with\nVigenere) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC2: Encrypt with\nVigenere) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC2: Encrypt with\nVigenere) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC2: Encrypt with\nVigenere) ..> (UC15: Get Key Input) : <<includes>>
+(UC2: Encrypt with\nVigenere) ..> (UC16: Display Encryption\nResult) : <<includes>>
+
+(UC3: Encrypt with\nPlayfair) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC3: Encrypt with\nPlayfair) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC3: Encrypt with\nPlayfair) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC3: Encrypt with\nPlayfair) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC3: Encrypt with\nPlayfair) ..> (UC15: Get Key Input) : <<includes>>
+(UC3: Encrypt with\nPlayfair) ..> (UC16: Display Encryption\nResult) : <<includes>>
+
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC15: Get Key Input) : <<includes>>
+(UC4: Encrypt with\nKeyed Transposition) ..> (UC16: Display Encryption\nResult) : <<includes>>
+
+(UC5: Encrypt with\nCombined Cipher) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC15: Get Key Input) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC16: Display Encryption\nResult) : <<includes>>
+(UC5: Encrypt with\nCombined Cipher) ..> (UC20: Choose Second\nAlgorithm) : <<includes>>
+
+(UC6: Encrypt with\nDES) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC6: Encrypt with\nDES) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC6: Encrypt with\nDES) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC6: Encrypt with\nDES) ..> (UC13: Get Plaintext\nInput) : <<includes>>
+(UC6: Encrypt with\nDES) ..> (UC15: Get Key Input) : <<includes>>
+(UC6: Encrypt with\nDES) ..> (UC16: Display Encryption\nResult) : <<includes>>
+
+' Includes relationships - Decryption and other use cases
+(UC7: Decrypt Text) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC7: Decrypt Text) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC7: Decrypt Text) ..> (UC12: Display Step-by-Step\nProcess) : <<includes>>
+(UC7: Decrypt Text) ..> (UC14: Get Ciphertext\nInput) : <<includes>>
+(UC7: Decrypt Text) ..> (UC15: Get Key Input) : <<includes>>
+(UC7: Decrypt Text) ..> (UC17: Display Decryption\nResult) : <<includes>>
+(UC7: Decrypt Text) ..> (UC19: Select Decryption\nAlgorithm) : <<includes>>
+
+(UC8: Perform Frequency\nAnalysis) ..> (UC10: Display\nMain Menu) : <<includes>>
+(UC8: Perform Frequency\nAnalysis) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC8: Perform Frequency\nAnalysis) ..> (UC14: Get Ciphertext\nInput) : <<includes>>
+
+(UC9: Exit System) ..> (UC10: Display\nMain Menu) : <<includes>>
+
+' Extends relationship
+(UC11: Validate\nUser Input) <.. (UC22: Handle Invalid\nInput) : <<extends>>
+
+' Input use cases include validation
+(UC13: Get Plaintext\nInput) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC14: Get Ciphertext\nInput) ..> (UC11: Validate\nUser Input) : <<includes>>
+(UC15: Get Key Input) ..> (UC11: Validate\nUser Input) : <<includes>>
+
+@enduml
+
+================================================================================
+                        SIMPLIFIED USE CASE DIAGRAM
+                        (Primary Use Cases Only)
+================================================================================
+
+This diagram shows only the primary use cases and the User actor for a high-level
+view of system functionality.
+
+@startuml
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor Black
+    ArrowColor Black
+}
+
+left to right direction
+
+actor User as user
+
+rectangle "Primary Use Cases" {
+    (UC1: Encrypt with\nMonoalphabetic Cipher)
+    (UC2: Encrypt with\nVigenere Cipher)
+    (UC3: Encrypt with\nPlayfair Cipher)
+    (UC4: Encrypt with\nKeyed Transposition)
+    (UC5: Encrypt with\nCombined Cipher)
+    (UC6: Encrypt with\nDES Cipher)
+    (UC7: Decrypt Text)
+    (UC8: Perform Frequency\nAnalysis)
+    (UC9: Exit System)
+}
+
+user --> (UC1: Encrypt with\nMonoalphabetic Cipher)
+user --> (UC2: Encrypt with\nVigenere Cipher)
+user --> (UC3: Encrypt with\nPlayfair Cipher)
+user --> (UC4: Encrypt with\nKeyed Transposition)
+user --> (UC5: Encrypt with\nCombined Cipher)
+user --> (UC6: Encrypt with\nDES Cipher)
+user --> (UC7: Decrypt Text)
+user --> (UC8: Perform Frequency\nAnalysis)
+user --> (UC9: Exit System)
+
+@enduml
+
+================================================================================
+                        RELATIONSHIPS DIAGRAM
+                        (Includes and Extends Relationships)
+================================================================================
+
+This diagram focuses on showing the includes and extends relationships between
+use cases in detail.
+
+@startuml
+skinparam usecase {
+    BackgroundColor LightGreen
+    BorderColor Black
+    ArrowColor Black
+}
+
+left to right direction
+
+' Primary Use Cases
+rectangle "Primary Use Cases" {
+    (UC1: Encrypt Monoalphabetic)
+    (UC2: Encrypt Vigenere)
+    (UC3: Encrypt Playfair)
+    (UC4: Encrypt Keyed Transposition)
+    (UC5: Encrypt Combined)
+    (UC6: Encrypt DES)
+    (UC7: Decrypt Text)
+    (UC8: Frequency Analysis)
+}
+
+' Common supporting use cases (most frequently included)
+rectangle "Common Supporting Use Cases" {
+    (UC10: Display Main Menu)
+    (UC11: Validate Input)
+    (UC12: Display Steps)
+    (UC13: Get Plaintext)
+    (UC14: Get Ciphertext)
+    (UC15: Get Key)
+    (UC16: Display Encryption Result)
+    (UC17: Display Decryption Result)
+    (UC19: Select Decryption Algorithm)
+    (UC20: Choose Second Algorithm)
+}
+
+' Extended use case
+rectangle "Extended Use Case" {
+    (UC22: Handle Invalid Input)
+}
+
+' Shows includes relationships for encryption use cases
+(UC1: Encrypt Monoalphabetic) ..> (UC10: Display Main Menu) : <<includes>>
+(UC1: Encrypt Monoalphabetic) ..> (UC11: Validate Input) : <<includes>>
+(UC1: Encrypt Monoalphabetic) ..> (UC12: Display Steps) : <<includes>>
+(UC1: Encrypt Monoalphabetic) ..> (UC13: Get Plaintext) : <<includes>>
+(UC1: Encrypt Monoalphabetic) ..> (UC15: Get Key) : <<includes>>
+(UC1: Encrypt Monoalphabetic) ..> (UC16: Display Encryption Result) : <<includes>>
+
+(UC2: Encrypt Vigenere) ..> (UC10: Display Main Menu) : <<includes>>
+(UC2: Encrypt Vigenere) ..> (UC11: Validate Input) : <<includes>>
+(UC2: Encrypt Vigenere) ..> (UC12: Display Steps) : <<includes>>
+(UC2: Encrypt Vigenere) ..> (UC13: Get Plaintext) : <<includes>>
+(UC2: Encrypt Vigenere) ..> (UC15: Get Key) : <<includes>>
+(UC2: Encrypt Vigenere) ..> (UC16: Display Encryption Result) : <<includes>>
+
+(UC5: Encrypt Combined) ..> (UC20: Choose Second Algorithm) : <<includes>>
+
+(UC7: Decrypt Text) ..> (UC14: Get Ciphertext) : <<includes>>
+(UC7: Decrypt Text) ..> (UC17: Display Decryption Result) : <<includes>>
+(UC7: Decrypt Text) ..> (UC19: Select Decryption Algorithm) : <<includes>>
+
+(UC8: Frequency Analysis) ..> (UC14: Get Ciphertext) : <<includes>>
+
+' Extends relationship
+(UC11: Validate Input) <.. (UC22: Handle Invalid Input) : <<extends>>
+
+@enduml
+
+================================================================================
+                        GENERALIZATION DIAGRAM
+================================================================================
+
+This diagram shows generalization relationships where abstract use cases are
+specialized by concrete use cases.
+
+@startuml
+skinparam usecase {
+    BackgroundColor LightYellow
+    BorderColor Black
+    ArrowColor Black
+}
+
+' Abstract base use cases
+rectangle "Abstract Use Cases" {
+    (ProcessCipherOperation) <<abstract>>
+    (GetTextInput) <<abstract>>
+}
+
+' Concrete specialized use cases
+rectangle "Concrete Use Cases" {
+    (UC1: Encrypt Monoalphabetic)
+    (UC2: Encrypt Vigenere)
+    (UC3: Encrypt Playfair)
+    (UC4: Encrypt Keyed Transposition)
+    (UC5: Encrypt Combined)
+    (UC6: Encrypt DES)
+    (UC7: Decrypt Text)
+    (UC13: Get Plaintext Input)
+    (UC14: Get Ciphertext Input)
+}
+
+' Generalization relationships
+(ProcessCipherOperation) <|-- (UC1: Encrypt Monoalphabetic)
+(ProcessCipherOperation) <|-- (UC2: Encrypt Vigenere)
+(ProcessCipherOperation) <|-- (UC3: Encrypt Playfair)
+(ProcessCipherOperation) <|-- (UC4: Encrypt Keyed Transposition)
+(ProcessCipherOperation) <|-- (UC5: Encrypt Combined)
+(ProcessCipherOperation) <|-- (UC6: Encrypt DES)
+(ProcessCipherOperation) <|-- (UC7: Decrypt Text)
+
+(GetTextInput) <|-- (UC13: Get Plaintext Input)
+(GetTextInput) <|-- (UC14: Get Ciphertext Input)
+
+@enduml
+
+================================================================================
+                        NOTES FOR PLANTUML DIAGRAMS
+================================================================================
+
+1. All diagrams use PlantUML syntax and can be rendered using:
+   - Online: http://www.plantuml.com/plantuml/
+   - VS Code: PlantUML extension
+   - IntelliJ IDEA: PlantUML plugin
+   - Standalone: PlantUML jar file
+
+2. Relationship Types:
+   - Association (-->): User to use case
+   - Include (..>): Mandatory inclusion, labeled <<includes>>
+   - Extend (<..): Optional extension, labeled <<extends>>
+   - Generalization (<|--): Inheritance relationship
+
+3. Color Coding:
+   - Primary Use Cases: Light Blue
+   - Supporting Use Cases: Light Green
+   - Extended Use Cases: Light Yellow
+
+4. Diagram Organization:
+   - Main Diagram: Complete view with all use cases and relationships
+   - Simplified Diagram: High-level view with only primary use cases
+   - Relationships Diagram: Focus on includes and extends relationships
+   - Generalization Diagram: Shows inheritance relationships
+
+5. To customize:
+   - Modify colors in skinparam directives
+   - Adjust rectangle groupings as needed
+   - Add or remove use case details
+   - Change arrow directions (left to right, top to bottom)
+
+================================================================================
+                        END OF DOCUMENTATION
+================================================================================
+
+================================================================================
+                    PLANTUML USE CASE DIAGRAMS
+================================================================================
+
+The following PlantUML code can be used to generate use case diagrams for the
+Educational Encryption Tool system. The diagrams show all actors, use cases, and
+their relationships (includes, extends, generalization).
+
+================================================================================
+                    COMPLETE USE CASE DIAGRAM
+================================================================================
+
+@startuml
+!theme plain
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+' Define Actor
+actor User
+
+' Define Primary Use Cases
+usecase "UC1: Encrypt with Monoalphabetic" as UC1
+usecase "UC2: Encrypt with Vigenere" as UC2
+usecase "UC3: Encrypt with Playfair" as UC3
+usecase "UC4: Encrypt with Keyed Transposition" as UC4
+usecase "UC5: Encrypt with Combined Cipher" as UC5
+usecase "UC6: Encrypt with DES" as UC6
+usecase "UC7: Decrypt Text" as UC7
+usecase "UC8: Perform Frequency Analysis" as UC8
+usecase "UC9: Exit System" as UC9
+
+' Define Supporting Use Cases
+usecase "UC10: Display Main Menu" as UC10
+usecase "UC11: Validate User Input" as UC11
+usecase "UC12: Display Step-by-Step Process" as UC12
+usecase "UC13: Get Plaintext Input" as UC13
+usecase "UC14: Get Ciphertext Input" as UC14
+usecase "UC15: Get Key Input" as UC15
+usecase "UC16: Display Encryption Result" as UC16
+usecase "UC17: Display Decryption Result" as UC17
+usecase "UC18: Select Encryption Algorithm" as UC18
+usecase "UC19: Select Decryption Algorithm" as UC19
+usecase "UC20: Choose Second Algorithm" as UC20
+usecase "UC21: Display Welcome Message" as UC21
+usecase "UC22: Handle Invalid Input" as UC22
+
+' Actor associations with primary use cases
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+' Includes relationships - UC1 (Monoalphabetic)
+UC1 ..> UC10 : <<includes>>
+UC1 ..> UC11 : <<includes>>
+UC1 ..> UC12 : <<includes>>
+UC1 ..> UC13 : <<includes>>
+UC1 ..> UC15 : <<includes>>
+UC1 ..> UC16 : <<includes>>
+
+' Includes relationships - UC2 (Vigenere)
+UC2 ..> UC10 : <<includes>>
+UC2 ..> UC11 : <<includes>>
+UC2 ..> UC12 : <<includes>>
+UC2 ..> UC13 : <<includes>>
+UC2 ..> UC15 : <<includes>>
+UC2 ..> UC16 : <<includes>>
+
+' Includes relationships - UC3 (Playfair)
+UC3 ..> UC10 : <<includes>>
+UC3 ..> UC11 : <<includes>>
+UC3 ..> UC12 : <<includes>>
+UC3 ..> UC13 : <<includes>>
+UC3 ..> UC15 : <<includes>>
+UC3 ..> UC16 : <<includes>>
+
+' Includes relationships - UC4 (Keyed Transposition)
+UC4 ..> UC10 : <<includes>>
+UC4 ..> UC11 : <<includes>>
+UC4 ..> UC12 : <<includes>>
+UC4 ..> UC13 : <<includes>>
+UC4 ..> UC15 : <<includes>>
+UC4 ..> UC16 : <<includes>>
+
+' Includes relationships - UC5 (Combined Cipher)
+UC5 ..> UC10 : <<includes>>
+UC5 ..> UC11 : <<includes>>
+UC5 ..> UC12 : <<includes>>
+UC5 ..> UC13 : <<includes>>
+UC5 ..> UC15 : <<includes>>
+UC5 ..> UC16 : <<includes>>
+UC5 ..> UC20 : <<includes>>
+
+' Includes relationships - UC6 (DES)
+UC6 ..> UC10 : <<includes>>
+UC6 ..> UC11 : <<includes>>
+UC6 ..> UC12 : <<includes>>
+UC6 ..> UC13 : <<includes>>
+UC6 ..> UC15 : <<includes>>
+UC6 ..> UC16 : <<includes>>
+
+' Includes relationships - UC7 (Decrypt Text)
+UC7 ..> UC10 : <<includes>>
+UC7 ..> UC11 : <<includes>>
+UC7 ..> UC12 : <<includes>>
+UC7 ..> UC14 : <<includes>>
+UC7 ..> UC15 : <<includes>>
+UC7 ..> UC17 : <<includes>>
+UC7 ..> UC19 : <<includes>>
+
+' Includes relationships - UC8 (Frequency Analysis)
+UC8 ..> UC10 : <<includes>>
+UC8 ..> UC11 : <<includes>>
+UC8 ..> UC14 : <<includes>>
+
+' Includes relationships - UC9 (Exit System)
+UC9 ..> UC10 : <<includes>>
+
+' Extends relationship
+UC22 <.. UC11 : <<extends>>
+
+' Generalization relationships (abstract base use cases)
+usecase "Process Cipher Operation" as BaseProcess
+BaseProcess <|-- UC1
+BaseProcess <|-- UC2
+BaseProcess <|-- UC3
+BaseProcess <|-- UC4
+BaseProcess <|-- UC5
+BaseProcess <|-- UC6
+BaseProcess <|-- UC7
+
+usecase "Get Text Input" as BaseTextInput
+BaseTextInput <|-- UC13
+BaseTextInput <|-- UC14
+
+@enduml
+
+================================================================================
+                    SIMPLIFIED PRIMARY USE CASES DIAGRAM
+================================================================================
+
+This simplified diagram shows only the primary use cases and the User actor,
+making it easier to see the main system functionality at a glance.
+
+@startuml
+!theme plain
+skinparam usecase {
+    BackgroundColor LightGreen
+    BorderColor DarkGreen
+}
+
+actor User
+
+package "Encryption Use Cases" {
+    usecase "UC1: Encrypt with Monoalphabetic" as UC1
+    usecase "UC2: Encrypt with Vigenere" as UC2
+    usecase "UC3: Encrypt with Playfair" as UC3
+    usecase "UC4: Encrypt with Keyed Transposition" as UC4
+    usecase "UC5: Encrypt with Combined Cipher" as UC5
+    usecase "UC6: Encrypt with DES" as UC6
+}
+
+package "Decryption Use Cases" {
+    usecase "UC7: Decrypt Text" as UC7
+}
+
+package "Cryptanalysis Use Cases" {
+    usecase "UC8: Perform Frequency Analysis" as UC8
+}
+
+package "System Navigation" {
+    usecase "UC9: Exit System" as UC9
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+@enduml
+
+================================================================================
+                    DETAILED RELATIONSHIPS DIAGRAM
+================================================================================
+
+This diagram focuses on showing the relationships between use cases in detail,
+particularly the includes, extends, and generalization relationships.
+
+@startuml
+!theme plain
+
+' Encryption Use Cases with Includes
+usecase "UC1: Encrypt Monoalphabetic" as UC1
+usecase "UC2: Encrypt Vigenere" as UC2
+usecase "UC5: Encrypt Combined" as UC5
+
+' Supporting Use Cases
+usecase "UC10: Display Main Menu" as UC10
+usecase "UC11: Validate Input" as UC11
+usecase "UC12: Display Steps" as UC12
+usecase "UC13: Get Plaintext" as UC13
+usecase "UC15: Get Key" as UC15
+usecase "UC16: Display Result" as UC16
+usecase "UC20: Choose Algorithm" as UC20
+usecase "UC22: Handle Invalid Input" as UC22
+
+' Common includes for UC1, UC2
+UC1 ..> UC10 : <<includes>>
+UC1 ..> UC11 : <<includes>>
+UC1 ..> UC12 : <<includes>>
+UC1 ..> UC13 : <<includes>>
+UC1 ..> UC15 : <<includes>>
+UC1 ..> UC16 : <<includes>>
+
+UC2 ..> UC10 : <<includes>>
+UC2 ..> UC11 : <<includes>>
+UC2 ..> UC12 : <<includes>>
+UC2 ..> UC13 : <<includes>>
+UC2 ..> UC15 : <<includes>>
+UC2 ..> UC16 : <<includes>>
+
+' UC5 with additional includes
+UC5 ..> UC10 : <<includes>>
+UC5 ..> UC11 : <<includes>>
+UC5 ..> UC12 : <<includes>>
+UC5 ..> UC13 : <<includes>>
+UC5 ..> UC15 : <<includes>>
+UC5 ..> UC16 : <<includes>>
+UC5 ..> UC20 : <<includes>>
+
+' Extends relationship
+UC22 <.. UC11 : <<extends>>
+note right of UC22 : Handles invalid input\nwhen validation fails
+
+' Generalization
+usecase "Process Cipher" as Base
+Base <|-- UC1
+Base <|-- UC2
+Base <|-- UC5
+
+@enduml
+
+================================================================================
+                    FREQUENCY ANALYSIS DETAIL DIAGRAM
+================================================================================
+
+This diagram shows the detailed relationships for the Frequency Analysis use case
+(UC8) and its dependencies.
+
+@startuml
+!theme plain
+
+actor User
+
+usecase "UC8: Perform Frequency Analysis" as UC8
+usecase "UC10: Display Main Menu" as UC10
+usecase "UC11: Validate Input" as UC11
+usecase "UC14: Get Ciphertext" as UC14
+usecase "UC1: Encrypt Monoalphabetic" as UC1
+
+User --> UC8
+
+UC8 ..> UC10 : <<includes>>
+UC8 ..> UC11 : <<includes>>
+UC8 ..> UC14 : <<includes>>
+UC8 ..> UC1 : uses for\nauto-decryption
+
+note right of UC8
+  Automatically detects key
+  and decrypts monoalphabetic
+  ciphers using correlation
+  analysis
+end note
+
+@enduml
+
+================================================================================
+                    DECRYPTION USE CASE DETAIL DIAGRAM
+================================================================================
+
+This diagram shows the detailed relationships for the Decryption use case (UC7)
+including algorithm selection.
+
+@startuml
+!theme plain
+
+actor User
+
+usecase "UC7: Decrypt Text" as UC7
+usecase "UC10: Display Main Menu" as UC10
+usecase "UC11: Validate Input" as UC11
+usecase "UC12: Display Steps" as UC12
+usecase "UC14: Get Ciphertext" as UC14
+usecase "UC15: Get Key" as UC15
+usecase "UC17: Display Result" as UC17
+usecase "UC19: Select Algorithm" as UC19
+
+User --> UC7
+
+UC7 ..> UC10 : <<includes>>
+UC7 ..> UC11 : <<includes>>
+UC7 ..> UC12 : <<includes>>
+UC7 ..> UC14 : <<includes>>
+UC7 ..> UC15 : <<includes>>
+UC7 ..> UC17 : <<includes>>
+UC7 ..> UC19 : <<includes>>
+
+note right of UC19
+  User selects which
+  algorithm was used:
+  Monoalphabetic, Vigenere,
+  Playfair, Transposition,
+  or DES
+end note
+
+@enduml
+
+================================================================================
+                    NOTES ON PLANTUML DIAGRAMS
+================================================================================
+
+1. To generate diagrams from PlantUML code:
+   - Use an online PlantUML editor (http://www.plantuml.com/plantuml/)
+   - Use PlantUML plugin in IDE (IntelliJ, VS Code, etc.)
+   - Use PlantUML command-line tool with Java
+
+2. Diagram Types:
+   - Complete Use Case Diagram: Shows all use cases and relationships
+   - Simplified Primary: Shows only primary use cases grouped by category
+   - Detailed Relationships: Focuses on includes, extends, generalization
+   - Frequency Analysis Detail: Shows UC8 specific relationships
+   - Decryption Detail: Shows UC7 specific relationships
+
+3. Relationship Notation:
+   - Association (-->): Direct interaction between actor and use case
+   - Includes (..>): Mandatory inclusion, always executes
+   - Extends (<..): Optional extension, conditionally executes
+   - Generalization (<|--): Inheritance/specialization relationship
+
+4. Customization:
+   - Colors can be adjusted by modifying skinparam usecase sections
+   - Themes can be changed (plain, cerulean, reddress-darkblue, etc.)
+   - Packages can be added for better organization
+   - Notes can be added for additional clarification
+
+================================================================================
+
+================================================================================
+                    PLANTUML USE CASE DIAGRAMS
+================================================================================
+
+The following PlantUML code can be used to generate use case diagrams for the
+Educational Encryption Tool system. Copy the code into PlantUML online editor
+(plantuml.com) or any PlantUML-compatible tool to visualize the diagrams.
+
+-------------------------------------------------------------------------------
+COMPLETE USE CASE DIAGRAM (All Relationships)
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+' Actor definition
+actor User
+
+' Primary Use Cases (Top Level)
+rectangle "Primary Use Cases" {
+  (UC1: Encrypt with Monoalphabetic) as UC1
+  (UC2: Encrypt with Vigenere) as UC2
+  (UC3: Encrypt with Playfair) as UC3
+  (UC4: Encrypt with Keyed Transposition) as UC4
+  (UC5: Encrypt with Combined Cipher) as UC5
+  (UC6: Encrypt with DES) as UC6
+  (UC7: Decrypt Text) as UC7
+  (UC8: Perform Frequency Analysis) as UC8
+  (UC9: Exit System) as UC9
+}
+
+' Supporting Use Cases - System Navigation
+rectangle "System Navigation" {
+  (UC10: Display Main Menu) as UC10
+  (UC21: Display Welcome Message) as UC21
+  (UC22: Handle Invalid Input) as UC22
+}
+
+' Supporting Use Cases - Input/Output
+rectangle "Input/Output" {
+  (UC11: Validate User Input) as UC11
+  (UC12: Display Step-by-Step Process) as UC12
+  (UC13: Get Plaintext Input) as UC13
+  (UC14: Get Ciphertext Input) as UC14
+  (UC15: Get Key Input) as UC15
+  (UC16: Display Encryption Result) as UC16
+  (UC17: Display Decryption Result) as UC17
+}
+
+' Supporting Use Cases - Algorithm Selection
+rectangle "Algorithm Selection" {
+  (UC18: Select Encryption Algorithm) as UC18
+  (UC19: Select Decryption Algorithm) as UC19
+  (UC20: Choose Second Algorithm) as UC20
+}
+
+' Actor associations with primary use cases
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+' Includes relationships (<<includes>>)
+' Encryption use cases include common supporting use cases
+UC1 ..> UC10 : <<includes>>
+UC1 ..> UC11 : <<includes>>
+UC1 ..> UC12 : <<includes>>
+UC1 ..> UC13 : <<includes>>
+UC1 ..> UC15 : <<includes>>
+UC1 ..> UC16 : <<includes>>
+
+UC2 ..> UC10 : <<includes>>
+UC2 ..> UC11 : <<includes>>
+UC2 ..> UC12 : <<includes>>
+UC2 ..> UC13 : <<includes>>
+UC2 ..> UC15 : <<includes>>
+UC2 ..> UC16 : <<includes>>
+
+UC3 ..> UC10 : <<includes>>
+UC3 ..> UC11 : <<includes>>
+UC3 ..> UC12 : <<includes>>
+UC3 ..> UC13 : <<includes>>
+UC3 ..> UC15 : <<includes>>
+UC3 ..> UC16 : <<includes>>
+
+UC4 ..> UC10 : <<includes>>
+UC4 ..> UC11 : <<includes>>
+UC4 ..> UC12 : <<includes>>
+UC4 ..> UC13 : <<includes>>
+UC4 ..> UC15 : <<includes>>
+UC4 ..> UC16 : <<includes>>
+
+UC5 ..> UC10 : <<includes>>
+UC5 ..> UC11 : <<includes>>
+UC5 ..> UC12 : <<includes>>
+UC5 ..> UC13 : <<includes>>
+UC5 ..> UC15 : <<includes>>
+UC5 ..> UC16 : <<includes>>
+UC5 ..> UC20 : <<includes>>
+
+UC6 ..> UC10 : <<includes>>
+UC6 ..> UC11 : <<includes>>
+UC6 ..> UC12 : <<includes>>
+UC6 ..> UC13 : <<includes>>
+UC6 ..> UC15 : <<includes>>
+UC6 ..> UC16 : <<includes>>
+
+' Decryption use case includes
+UC7 ..> UC10 : <<includes>>
+UC7 ..> UC11 : <<includes>>
+UC7 ..> UC12 : <<includes>>
+UC7 ..> UC14 : <<includes>>
+UC7 ..> UC15 : <<includes>>
+UC7 ..> UC17 : <<includes>>
+UC7 ..> UC19 : <<includes>>
+
+' Cryptanalysis use case includes
+UC8 ..> UC10 : <<includes>>
+UC8 ..> UC11 : <<includes>>
+UC8 ..> UC14 : <<includes>>
+
+' Exit use case includes
+UC9 ..> UC10 : <<includes>>
+
+' Input use cases include validation
+UC13 ..> UC11 : <<includes>>
+UC14 ..> UC11 : <<includes>>
+UC15 ..> UC11 : <<includes>>
+
+' Extends relationship (<<extends>>)
+UC22 ..> UC11 : <<extends>>\n(when validation fails)
+
+' Generalization relationships
+(Process Cipher Operation) <|-- UC1
+(Process Cipher Operation) <|-- UC2
+(Process Cipher Operation) <|-- UC3
+(Process Cipher Operation) <|-- UC4
+(Process Cipher Operation) <|-- UC5
+(Process Cipher Operation) <|-- UC6
+(Process Cipher Operation) <|-- UC7
+
+(Get Text Input) <|-- UC13
+(Get Text Input) <|-- UC14
+
+@enduml
+
+-------------------------------------------------------------------------------
+SIMPLIFIED PRIMARY USE CASES DIAGRAM (User-Facing)
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+actor User
+
+(UC1: Encrypt with\nMonoalphabetic) as UC1
+(UC2: Encrypt with\nVigenere) as UC2
+(UC3: Encrypt with\nPlayfair) as UC3
+(UC4: Encrypt with\nKeyed Transposition) as UC4
+(UC5: Encrypt with\nCombined Cipher) as UC5
+(UC6: Encrypt with\nDES) as UC6
+(UC7: Decrypt Text) as UC7
+(UC8: Perform Frequency\nAnalysis) as UC8
+(UC9: Exit System) as UC9
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+note right of UC1 : Uses integer shift key\n(Caesar Cipher)
+note right of UC5 : Combines Monoalphabetic\nwith another cipher
+note right of UC8 : Auto-detects key and\ndecrypts monoalphabetic
+
+@enduml
+
+-------------------------------------------------------------------------------
+SUPPORTING USE CASES RELATIONSHIPS DIAGRAM
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+' Supporting use cases organized by category
+rectangle "Input Handling" {
+  (UC11: Validate User Input) as UC11
+  (UC13: Get Plaintext Input) as UC13
+  (UC14: Get Ciphertext Input) as UC14
+  (UC15: Get Key Input) as UC15
+  (UC22: Handle Invalid Input) as UC22
+}
+
+rectangle "Display & Output" {
+  (UC10: Display Main Menu) as UC10
+  (UC12: Display Step-by-Step\nProcess) as UC12
+  (UC16: Display Encryption\nResult) as UC16
+  (UC17: Display Decryption\nResult) as UC17
+  (UC21: Display Welcome\nMessage) as UC21
+}
+
+rectangle "Algorithm Selection" {
+  (UC18: Select Encryption\nAlgorithm) as UC18
+  (UC19: Select Decryption\nAlgorithm) as UC19
+  (UC20: Choose Second\nAlgorithm) as UC20
+}
+
+' Input relationships
+UC13 ..> UC11 : <<includes>>
+UC14 ..> UC11 : <<includes>>
+UC15 ..> UC11 : <<includes>>
+UC22 ..> UC11 : <<extends>>
+
+' Generalization
+(Get Text Input) <|-- UC13
+(Get Text Input) <|-- UC14
+
+@enduml
+
+-------------------------------------------------------------------------------
+ENCRYPTION USE CASES WITH COMMON INCLUDES
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+actor User
+
+(UC1: Encrypt with\nMonoalphabetic) as UC1
+(UC2: Encrypt with\nVigenere) as UC2
+(UC3: Encrypt with\nPlayfair) as UC3
+(UC4: Encrypt with\nKeyed Transposition) as UC4
+(UC5: Encrypt with\nCombined Cipher) as UC5
+(UC6: Encrypt with\nDES) as UC6
+
+' Common supporting use cases
+(UC10: Display Main Menu) as UC10
+(UC11: Validate User Input) as UC11
+(UC12: Display Step-by-Step) as UC12
+(UC13: Get Plaintext Input) as UC13
+(UC15: Get Key Input) as UC15
+(UC16: Display Encryption\nResult) as UC16
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+
+' Show common includes for encryption use cases
+UC1 ..> UC10 : <<includes>>
+UC1 ..> UC11 : <<includes>>
+UC1 ..> UC12 : <<includes>>
+UC1 ..> UC13 : <<includes>>
+UC1 ..> UC15 : <<includes>>
+UC1 ..> UC16 : <<includes>>
+
+UC2 ..> UC10 : <<includes>>
+UC2 ..> UC11 : <<includes>>
+UC2 ..> UC12 : <<includes>>
+UC2 ..> UC13 : <<includes>>
+UC2 ..> UC15 : <<includes>>
+UC2 ..> UC16 : <<includes>>
+
+UC3 ..> UC10 : <<includes>>
+UC3 ..> UC11 : <<includes>>
+UC3 ..> UC12 : <<includes>>
+UC3 ..> UC13 : <<includes>>
+UC3 ..> UC15 : <<includes>>
+UC3 ..> UC16 : <<includes>>
+
+UC4 ..> UC10 : <<includes>>
+UC4 ..> UC11 : <<includes>>
+UC4 ..> UC12 : <<includes>>
+UC4 ..> UC13 : <<includes>>
+UC4 ..> UC15 : <<includes>>
+UC4 ..> UC16 : <<includes>>
+
+UC5 ..> UC10 : <<includes>>
+UC5 ..> UC11 : <<includes>>
+UC5 ..> UC12 : <<includes>>
+UC5 ..> UC13 : <<includes>>
+UC5 ..> UC15 : <<includes>>
+UC5 ..> UC16 : <<includes>>
+UC5 ..> (UC20: Choose Second\nAlgorithm) : <<includes>>
+
+UC6 ..> UC10 : <<includes>>
+UC6 ..> UC11 : <<includes>>
+UC6 ..> UC12 : <<includes>>
+UC6 ..> UC13 : <<includes>>
+UC6 ..> UC15 : <<includes>>
+UC6 ..> UC16 : <<includes>>
+
+@enduml
+
+-------------------------------------------------------------------------------
+DECRYPTION AND CRYPTANALYSIS USE CASES
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+actor User
+
+(UC7: Decrypt Text) as UC7
+(UC8: Perform Frequency\nAnalysis) as UC8
+
+' Supporting use cases for decryption
+(UC10: Display Main Menu) as UC10
+(UC11: Validate User Input) as UC11
+(UC12: Display Step-by-Step) as UC12
+(UC14: Get Ciphertext Input) as UC14
+(UC15: Get Key Input) as UC15
+(UC17: Display Decryption\nResult) as UC17
+(UC19: Select Decryption\nAlgorithm) as UC19
+
+User --> UC7
+User --> UC8
+
+' UC7 includes
+UC7 ..> UC10 : <<includes>>
+UC7 ..> UC11 : <<includes>>
+UC7 ..> UC12 : <<includes>>
+UC7 ..> UC14 : <<includes>>
+UC7 ..> UC15 : <<includes>>
+UC7 ..> UC17 : <<includes>>
+UC7 ..> UC19 : <<includes>>
+
+' UC8 includes
+UC8 ..> UC10 : <<includes>>
+UC8 ..> UC11 : <<includes>>
+UC8 ..> UC14 : <<includes>>
+
+note right of UC8 : Automatically detects key\nand decrypts monoalphabetic\nciphertext using correlation\nanalysis
+
+@enduml
+
+-------------------------------------------------------------------------------
+GENERALIZATION RELATIONSHIPS DIAGRAM
+-------------------------------------------------------------------------------
+
+@startuml
+!theme plain
+
+' Abstract base use cases
+(Process Cipher Operation) as BaseCipher
+
+(Get Text Input) as BaseTextInput
+
+' Primary use cases
+(UC1: Encrypt with\nMonoalphabetic) as UC1
+(UC2: Encrypt with\nVigenere) as UC2
+(UC3: Encrypt with\nPlayfair) as UC3
+(UC4: Encrypt with\nKeyed Transposition) as UC4
+(UC5: Encrypt with\nCombined Cipher) as UC5
+(UC6: Encrypt with\nDES) as UC6
+(UC7: Decrypt Text) as UC7
+
+' Specialized text input use cases
+(UC13: Get Plaintext Input) as UC13
+(UC14: Get Ciphertext Input) as UC14
+
+' Generalization relationships
+BaseCipher <|-- UC1
+BaseCipher <|-- UC2
+BaseCipher <|-- UC3
+BaseCipher <|-- UC4
+BaseCipher <|-- UC5
+BaseCipher <|-- UC6
+BaseCipher <|-- UC7
+
+BaseTextInput <|-- UC13
+BaseTextInput <|-- UC14
+
+note right of BaseCipher : Common flow:\n1. Get input\n2. Validate\n3. Process\n4. Display result
+
+note right of BaseTextInput : Common flow:\n1. Prompt user\n2. Capture input\n3. Validate input
+
+@enduml
+
+================================================================================
+                        PLANTUML DIAGRAM NOTES
+================================================================================
+
+PLANTUML SYNTAX GUIDE:
+  - Actor: actor User
+  - Use Case: (Use Case Name) as UC1
+  - Association: User --> UC1
+  - Includes: UC1 ..> UC10 : <<includes>>
+  - Extends: UC22 ..> UC11 : <<extends>>
+  - Generalization: UC1 --|> BaseUseCase
+  - Notes: note right of UC1 : Note text
+
+RELATIONSHIP TYPES:
+  --> Association (actor to use case)
+  ..> Dependency/Includes/Extends (use case to use case)
+  --|> Generalization (specialization/inheritance)
+
+HOW TO USE:
+  1. Copy any diagram code above (between @startuml and @enduml)
+  2. Paste into PlantUML online editor: http://www.plantuml.com/plantuml/
+  3. Click "Submit" to generate the diagram
+  4. Export as PNG, SVG, or other formats as needed
+
+DIAGRAM ORGANIZATION:
+  - Complete Diagram: Shows all use cases and relationships (may be complex)
+  - Simplified Primary: Shows only user-facing primary use cases
+  - Supporting Relationships: Shows supporting use cases and their structure
+  - Encryption Focus: Details encryption use cases and common includes
+  - Decryption/Cryptanalysis: Details decryption and frequency analysis
+  - Generalization: Shows inheritance relationships
+
+================================================================================
+                        END OF PLANTUML DIAGRAMS
+================================================================================
